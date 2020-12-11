@@ -1,10 +1,15 @@
 buildscript {
+    ext.kotlin_version = '1.4.20'
+
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
@@ -12,14 +17,14 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
 }
 
 ext{
     targetSdk = 30
-    minSdk = 14
+    minSdk = 19
     sourceCompatibilityVersion = JavaVersion.VERSION_1_8
     targetCompatibilityVersion = JavaVersion.VERSION_1_8
 
