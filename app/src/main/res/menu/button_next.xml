@@ -5,7 +5,6 @@
     <item
         android:id="@+id/forward"
         android:icon="@drawable/selector_arrow_forward"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 
 </menu>

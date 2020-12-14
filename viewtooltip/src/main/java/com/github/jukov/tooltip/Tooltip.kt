@@ -473,6 +473,8 @@ class Tooltip(
             val x: Int
             val y: Int
 
+            val defaultMargin = dpToPx(MARGIN_SCREEN_BORDER_TOOLTIP_DP, context).toInt()
+
             when (position) {
                 Position.START -> {
                     x = targetViewRect.left - width - tooltipMargin.roundToInt()
@@ -480,8 +482,11 @@ class Tooltip(
                 }
 
                 Position.TOP -> {
+                    val xMax = screenWidth - width - defaultMargin
+
                     y = targetViewRect.top - height - tooltipMargin.roundToInt()
-                    x = targetViewRect.left + getAlignOffset(width, targetViewRect.width())
+                    x = (targetViewRect.left + getAlignOffset(width, targetViewRect.width()))
+                        .coerceIn(defaultMargin..xMax)
                 }
 
                 Position.END -> {
@@ -490,8 +495,11 @@ class Tooltip(
                 }
 
                 Position.BOTTOM -> {
+                    val xMax = screenWidth - width - defaultMargin
+
                     y = targetViewRect.bottom + tooltipMargin.roundToInt()
-                    x = targetViewRect.left + getAlignOffset(width, targetViewRect.width())
+                    x = (targetViewRect.left + getAlignOffset(width, targetViewRect.width()))
+                        .coerceIn(defaultMargin..xMax)
                 }
             }
 

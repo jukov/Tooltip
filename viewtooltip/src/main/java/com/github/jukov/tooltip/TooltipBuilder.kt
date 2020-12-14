@@ -91,7 +91,7 @@ class TooltipBuilder {
             }
     }
 
-    private fun findScrollParent(view: View): NestedScrollView? {
+    private fun findScrollParent(view: View): NestedScrollView? {//TODO test case in scroll parent
         return if (view.parent == null || view.parent !is View) {
             null
         } else if (view.parent is NestedScrollView) {

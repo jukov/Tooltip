@@ -167,3 +167,22 @@ class BottomEndLargeTopTestCaseFragment: TestCaseFragment<TestCaseBottomEndBindi
         showTooltip(Tooltip.Position.TOP)
     }
 }
+
+class TopStartSmallBottomTestCaseFragment: TestCaseFragment<TestCaseTopStartBinding>() {
+
+    override val name: String = "top|start targetView, small bottom tooltip"
+
+    override fun onCreateDataBinding(): TestCaseTopStartBinding =
+        TestCaseTopStartBinding.inflate(layoutInflater)
+
+    override fun initTargetView() {
+        targetView = binding.buttonTarget
+    }
+
+    override fun showTooltips() {
+        showTooltip(
+            position = Tooltip.Position.BOTTOM,
+            tooltipLayout = R.layout.tooltip_icon
+        )
+    }
+}

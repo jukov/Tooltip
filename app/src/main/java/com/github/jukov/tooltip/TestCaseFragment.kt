@@ -2,6 +2,7 @@ package com.github.jukov.tooltip
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.viewbinding.ViewBinding
 
 abstract class TestCaseFragment<VB: ViewBinding>: BaseFragment<VB>() {
@@ -30,11 +31,12 @@ abstract class TestCaseFragment<VB: ViewBinding>: BaseFragment<VB>() {
     protected fun showTooltip(
         position: Tooltip.Position,
         align: Tooltip.Align  = Tooltip.Align.CENTER,
+        @LayoutRes tooltipLayout: Int = R.layout.tooltip_text_long
     ) {
         tooltips += showTooltip(
             fragment = this,
-            targetView,
-            R.layout.tooltip_text_long
+            targetView = targetView,
+            tooltipLayoutRes = tooltipLayout
         ) {
             this.align = align
             this.position = position

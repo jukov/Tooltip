@@ -19,7 +19,8 @@ class TestCasesActivity : AppCompatActivity() {
         BottomStartLargeEndTestCaseFragment(),
         BottomStartLargeTopTestCaseFragment(),
         BottomEndLargeStartTestCaseFragment(),
-        BottomEndLargeTopTestCaseFragment()
+        BottomEndLargeTopTestCaseFragment(),
+        TopStartSmallBottomTestCaseFragment()
     )
 
     private var currentCase: Int = 0
