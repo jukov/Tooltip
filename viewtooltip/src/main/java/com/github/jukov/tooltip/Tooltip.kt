@@ -12,8 +12,6 @@ import android.graphics.RectF
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.github.jukov.tooltip.TooltipBuilder.Align
-import com.github.jukov.tooltip.TooltipBuilder.Position
 import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
@@ -618,5 +616,20 @@ class Tooltip(
         private const val COLOR_BUBBLE_DEFAULT = 0xFF197327.toInt()
         private const val COLOR_SHADOW_DEFAULT = 0xFF333338.toInt()//TODO default shadow color
         private const val COLOR_TRANSPARENT = 0x0
+    }
+
+    enum class Position {
+        START,
+        END,
+        TOP,
+        BOTTOM;
+
+        fun isHorizontal() = this == START || this == END
+
+        fun isVertical() = this == TOP || this == BOTTOM
+    }
+
+    enum class Align {
+        START, CENTER, END
     }
 }

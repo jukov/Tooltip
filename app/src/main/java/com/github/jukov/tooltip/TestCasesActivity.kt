@@ -10,11 +10,16 @@ import androidx.appcompat.app.AppCompatActivity
 class TestCasesActivity : AppCompatActivity() {
 
     private val testCaseFragmentCreators = listOf(
-        CenterTestCaseFragment(),
-        TopStartTestCaseFragment(),
-        TopEndTestCaseFragment(),
-        BottomStartTestCaseFragment(),
-        BottomEndTestCaseFragment()
+        CenterLargeHorizontalTestCaseFragment(),
+        CenterLargeVerticalTestCaseFragment(),
+        TopStartLargeBottomTestCaseFragment(),
+        TopStartLargeEndTestCaseFragment(),
+        TopEndLargeStartTestCaseFragment(),
+        TopEndLargeBottomTestCaseFragment(),
+        BottomStartLargeEndTestCaseFragment(),
+        BottomStartLargeTopTestCaseFragment(),
+        BottomEndLargeStartTestCaseFragment(),
+        BottomEndLargeTopTestCaseFragment()
     )
 
     private var currentCase: Int = 0
@@ -22,12 +27,14 @@ class TestCasesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val initialTestCase = testCaseFragmentCreators[currentCase]
+
         savedInstanceState ?: supportFragmentManager
             .beginTransaction()
-            .add(android.R.id.content, CenterTestCaseFragment())
+            .add(android.R.id.content, initialTestCase)
             .commit()
 
-        initToolbar()
+        initToolbar(initialTestCase.name)
         handleBackPressed()
     }
 
@@ -35,9 +42,12 @@ class TestCasesActivity : AppCompatActivity() {
 
     }
 
-    private fun initToolbar() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+    private fun initToolbar(title: String) {
+        supportActionBar?.let { actionBar ->
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close)
+            actionBar.title = title //TODO text size
+        }
     }
 
     private fun invalidateToolbar() {
@@ -86,15 +96,27 @@ class TestCasesActivity : AppCompatActivity() {
         testCaseFragmentCreators.getOrNull(currentCase + 1) != null
 
     private fun nextCase() {
-        supportFragmentManager.beginTransaction()
-            .replace(android.R.id.content, testCaseFragmentCreators[++currentCase])
-            .commit()
+        testCaseFragmentCreators[++currentCase]
+            .let { fragment ->
+                supportFragmentManager.beginTransaction()
+                    .replace(android.R.id.content, fragment)
+                    .commit()
+
+                supportActionBar?.title = fragment.name
+            }
+
     }
 
     private fun previousCase() {
-        supportFragmentManager.beginTransaction()
-            .replace(android.R.id.content, testCaseFragmentCreators[--currentCase])
-            .commit()
+        testCaseFragmentCreators[--currentCase]
+            .let { fragment ->
+                supportFragmentManager.beginTransaction()
+                    .replace(android.R.id.content, fragment)
+                    .commit()
+
+                supportActionBar?.title = fragment.name
+            }
+
     }
 
     private fun hasPreviousCase(): Boolean =

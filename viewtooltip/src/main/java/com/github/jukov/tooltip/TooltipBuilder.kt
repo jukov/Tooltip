@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment
  * Created by florentchampigny on 02/06/2017.
  */
 
-fun tooltipOf(
+fun showTooltip(
     fragment: Fragment,
     targetView: View,
     tooltipLayout: View,
@@ -29,13 +29,31 @@ fun tooltipOf(
         .apply { configurator() }
         .show()
 
-fun tooltipOf(
+fun showTooltip(
+    fragment: Fragment,
+    targetView: View,
+    @LayoutRes tooltipLayoutRes: Int,
+    configurator: TooltipBuilder.() -> Unit,
+): Tooltip =
+    TooltipBuilder(
+        fragment,
+        targetView,
+        LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
+    )
+        .apply { configurator() }
+        .show()
+
+fun showTooltip(
     activity: Activity,
     @IdRes targetViewRes: Int,
     @LayoutRes tooltipLayoutRes: Int,
     configurator: TooltipBuilder.() -> Unit,
 ): Tooltip =
-    TooltipBuilder(activity, targetViewRes, tooltipLayoutRes)
+    TooltipBuilder(
+        activity,
+        activity.findViewById(targetViewRes),
+        LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
+    )
         .apply { configurator() }
         .show()
 
@@ -49,16 +67,6 @@ class TooltipBuilder {
 
     private val activity: Activity
 
-    constructor(
-        fragment: Fragment,
-        @IdRes targetViewRes: Int,
-        @LayoutRes tooltipLayoutRes: Int,
-    ) : this(
-        fragment,
-        fragment.requireView().findViewById(targetViewRes),
-        LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
-    )
-
     constructor(fragment: Fragment, targetView: View, tooltipLayout: View) {
         this.activity = fragment.requireActivity()
         this.targetView = targetView
@@ -67,16 +75,6 @@ class TooltipBuilder {
         this.tooltip = Tooltip(fragment.requireContext(), tooltipLayout)
         handleScrollingParent(targetView)
     }
-
-    constructor(
-        activity: Activity,
-        @IdRes targetViewRes: Int,
-        @LayoutRes tooltipLayoutRes: Int,
-    ) : this(
-        activity,
-        activity.findViewById(targetViewRes),
-        LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
-    )
 
     constructor(activity: Activity, targetView: View, tooltipLayout: View) {
         this.activity = activity
@@ -103,7 +101,7 @@ class TooltipBuilder {
         }
     }
 
-    var position: Position
+    var position: Tooltip.Position
         get() = tooltip.position
         set(value) {
             tooltip.position = value
@@ -145,7 +143,7 @@ class TooltipBuilder {
             tooltip.tooltipMargin = dpToPx(value, activity)
         }
 
-    var align: Align
+    var align: Tooltip.Align
         get() = tooltip.align
         set(value) {
             tooltip.align = value
@@ -261,21 +259,6 @@ class TooltipBuilder {
             50L
         )
         return tooltip
-    }
-
-    enum class Position {
-        START,
-        END,
-        TOP,
-        BOTTOM;
-
-        fun isHorizontal() = this == START || this == END
-
-        fun isVertical() = this == TOP || this == BOTTOM
-    }
-
-    enum class Align {
-        START, CENTER, END
     }
 
     interface TooltipAnimation {
