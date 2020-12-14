@@ -12,10 +12,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
     implementation project(path: ':viewtooltip')
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 }

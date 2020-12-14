@@ -5,4 +5,8 @@
     <string name="next">Next</string>
 
     <string name="sample_icon">sample_icon</string>
+    <string name="showcase">Showcase</string>
+    <string name="test_cases">Test cases</string>
+    <string name="tooltip_sample_app">Tooltip sample App</string>
+    <string name="sample_target_view">Sample target view</string>
 </resources>
