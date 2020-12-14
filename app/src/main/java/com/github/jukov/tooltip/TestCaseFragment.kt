@@ -1,47 +1,76 @@
 package com.github.jukov.tooltip
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.annotation.LayoutRes
-import androidx.viewbinding.ViewBinding
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 
-abstract class TestCaseFragment<VB: ViewBinding>: BaseFragment<VB>() {
+class TestCaseFragment : Fragment() {
 
-    abstract val name: String
+    private lateinit var tooltipConfig: TooltipConfig
 
-    private val tooltips = ArrayList<Tooltip>()
+    private lateinit var targetView: View
 
-    protected lateinit var targetView: View
+    private var tooltip: Tooltip? = null
 
-    abstract fun initTargetView()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let { bundle ->
+            tooltipConfig =
+                bundle.getParcelable<TooltipConfig>(TooltipConfig::class.qualifiedName)!!
+        } ?: error("No args")
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        return inflater.inflate(
+            when (tooltipConfig.targetViewPosition) {
+                TargetViewPosition.CENTER -> R.layout.test_case_center
+                TargetViewPosition.TOP_START -> R.layout.test_case_top_start
+                TargetViewPosition.TOP_END -> R.layout.test_case_top_end
+                TargetViewPosition.BOTTOM_START -> R.layout.test_case_bottom_start
+                TargetViewPosition.BOTTOM_END -> R.layout.test_case_bottom_end
+            },
+            container,
+            false
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initTargetView()
+        targetView = view.findViewById<View>(R.id.button_target)
 
-        showTooltips()
+        tooltip = showTooltip(
+            fragment = this,
+            targetView = targetView,
+            tooltipLayoutRes = when (tooltipConfig.viewType) {
+                ViewType.LARGE_TEXT -> R.layout.tooltip_text_long
+                ViewType.SMALL -> R.layout.tooltip_icon
+            }
+        ) {
+            position = tooltipConfig.position
+            clickToHide = true
+            setAutoHide(false, 0)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        tooltips.forEach { it.close() }
+        tooltip?.close()
     }
 
-    abstract fun showTooltips()
+    companion object {
 
-    protected fun showTooltip(
-        position: Tooltip.Position,
-        align: Tooltip.Align  = Tooltip.Align.CENTER,
-        @LayoutRes tooltipLayout: Int = R.layout.tooltip_text_long
-    ) {
-        tooltips += showTooltip(
-            fragment = this,
-            targetView = targetView,
-            tooltipLayoutRes = tooltipLayout
-        ) {
-            this.align = align
-            this.position = position
-            clickToHide = true
-            setAutoHide(false, 0)
-        }
+        fun newInstanse(config: TooltipConfig): TestCaseFragment =
+            TestCaseFragment()
+                .apply {
+                    arguments = Bundle().apply {
+                        putParcelable(TooltipConfig::class.qualifiedName, config)
+                    }
+                }
     }
 }

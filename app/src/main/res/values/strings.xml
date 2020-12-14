@@ -9,4 +9,13 @@
     <string name="test_cases">Test cases</string>
     <string name="tooltip_sample_app">Tooltip sample App</string>
     <string name="sample_target_view">Sample target view</string>
+    <string name="view_type">View type</string>
+    <string name="large_text">Large text</string>
+    <string name="icon">Icon</string>
+    <string name="start">Start</string>
+    <string name="center">Center</string>
+    <string name="end">End</string>
+    <string name="position">Position</string>
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
 </resources>

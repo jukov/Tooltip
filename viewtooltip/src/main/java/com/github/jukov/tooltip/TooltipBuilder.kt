@@ -15,10 +15,6 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 
-/**
- * Created by florentchampigny on 02/06/2017.
- */
-
 fun showTooltip(
     fragment: Fragment,
     targetView: View,
@@ -141,12 +137,6 @@ class TooltipBuilder {
         get() = pxToDp(tooltip.tooltipMargin, activity)
         set(value) {
             tooltip.tooltipMargin = dpToPx(value, activity)
-        }
-
-    var align: Tooltip.Align
-        get() = tooltip.align
-        set(value) {
-            tooltip.align = value
         }
 
     var duration: Long

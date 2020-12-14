@@ -9,33 +9,17 @@ import androidx.appcompat.app.AppCompatActivity
 
 class TestCasesActivity : AppCompatActivity() {
 
-    private val testCaseFragmentCreators = listOf(
-        CenterLargeHorizontalTestCaseFragment(),
-        CenterLargeVerticalTestCaseFragment(),
-        TopStartLargeBottomTestCaseFragment(),
-        TopStartLargeEndTestCaseFragment(),
-        TopEndLargeStartTestCaseFragment(),
-        TopEndLargeBottomTestCaseFragment(),
-        BottomStartLargeEndTestCaseFragment(),
-        BottomStartLargeTopTestCaseFragment(),
-        BottomEndLargeStartTestCaseFragment(),
-        BottomEndLargeTopTestCaseFragment(),
-        TopStartSmallBottomTestCaseFragment()
-    )
-
-    private var currentCase: Int = 0
+    private var mode: Mode = Mode.CONFIGURE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val initialTestCase = testCaseFragmentCreators[currentCase]
-
         savedInstanceState ?: supportFragmentManager
             .beginTransaction()
-            .add(android.R.id.content, initialTestCase)
+            .add(android.R.id.content, TestCaseConfigureFragment(), CONFIGURE_FRAGMENT_TAG)
             .commit()
 
-        initToolbar(initialTestCase.name)
+        initToolbar()
         handleBackPressed()
     }
 
@@ -43,7 +27,7 @@ class TestCasesActivity : AppCompatActivity() {
 
     }
 
-    private fun initToolbar(title: String) {
+    private fun initToolbar(title: String = getString(R.string.app_name)) {
         supportActionBar?.let { actionBar ->
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_close)
@@ -52,7 +36,7 @@ class TestCasesActivity : AppCompatActivity() {
     }
 
     private fun invalidateToolbar() {
-        if (hasPreviousCase()) {
+        if (mode == Mode.DISPLAY) {
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         } else {
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
@@ -60,8 +44,9 @@ class TestCasesActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        if (hasPreviousCase()) {
-            previousCase()
+        if (mode == Mode.DISPLAY) {
+            mode = Mode.CONFIGURE
+            supportFragmentManager.popBackStack()
             invalidateOptionsMenu()
             invalidateToolbar()
         } else {
@@ -71,19 +56,19 @@ class TestCasesActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.button_next, menu)
+        menuInflater.inflate(R.menu.button_done, menu)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.findItem(R.id.forward).isEnabled = hasNextCase()
+        menu.findItem(R.id.done).isVisible = mode == Mode.CONFIGURE
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
-            R.id.forward -> {
-                nextCase()
+            R.id.done -> {
+                showTest()
                 invalidateOptionsMenu()
                 invalidateToolbar()
                 true
@@ -93,37 +78,29 @@ class TestCasesActivity : AppCompatActivity() {
             }
         }
 
-    private fun hasNextCase(): Boolean =
-        testCaseFragmentCreators.getOrNull(currentCase + 1) != null
-
-    private fun nextCase() {
-        testCaseFragmentCreators[++currentCase]
-            .let { fragment ->
-                supportFragmentManager.beginTransaction()
-                    .replace(android.R.id.content, fragment)
-                    .commit()
-
-                supportActionBar?.title = fragment.name
-            }
-
+    private fun showTest() {
+            (supportFragmentManager
+                .findFragmentByTag(CONFIGURE_FRAGMENT_TAG) as? TestCaseConfigureFragment)
+                ?.makeConfig()
+                ?.let { config -> TestCaseFragment.newInstanse(config) }
+                ?.let { fragmenr ->
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(android.R.id.content, fragmenr)
+                        .addToBackStack(null)
+                        .commit()
+                }
+                ?.also { mode = Mode.DISPLAY }
     }
 
-    private fun previousCase() {
-        testCaseFragmentCreators[--currentCase]
-            .let { fragment ->
-                supportFragmentManager.beginTransaction()
-                    .replace(android.R.id.content, fragment)
-                    .commit()
-
-                supportActionBar?.title = fragment.name
-            }
-
+    private enum class Mode {
+        CONFIGURE,
+        DISPLAY
     }
-
-    private fun hasPreviousCase(): Boolean =
-        testCaseFragmentCreators.getOrNull(currentCase - 1) != null
 
     companion object {
+
+        private const val CONFIGURE_FRAGMENT_TAG = "CONFIGURE_FRAGMENT_TAG"
         fun start(context: Context) {
             context.startActivity(
                 Intent(

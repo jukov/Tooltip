@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp">
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_type" />
+
+    <RadioGroup
+        android:id="@+id/group_view_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_view_type_large_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/large_text" />
+
+        <RadioButton
+            android:id="@+id/radio_view_type_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/icon" />
+
+    </RadioGroup>
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Target view position" />
+
+    <RadioGroup
+        android:id="@+id/group_target_view_position"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/center" />
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_top_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top Start" />
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_top_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top End" />
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_bottom_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bottom Start" />
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_bottom_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bottom End" />
+
+    </RadioGroup>
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/position" />
+
+    <RadioGroup
+        android:id="@+id/group_position"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_position_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/start" />
+
+        <RadioButton
+            android:id="@+id/radio_position_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/top" />
+
+        <RadioButton
+            android:id="@+id/radio_position_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/end" />
+
+        <RadioButton
+            android:id="@+id/radio_position_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bottom" />
+
+    </RadioGroup>
+
+</LinearLayout>

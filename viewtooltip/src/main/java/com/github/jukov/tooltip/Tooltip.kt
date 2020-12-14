@@ -91,12 +91,6 @@ class Tooltip(
             postInvalidate()
         }
 
-    var align = Align.CENTER
-        set(value) {
-            field = value
-            postInvalidate()
-        }
-
     var clickToHide = false
 
     var autoHide = false
@@ -260,14 +254,6 @@ class Tooltip(
                         targetViewRect.left - defaultMargin.roundToInt() - tooltipMargin.roundToInt()
                     changed = true
                 }
-
-                if (targetViewRect.centerY() + height / 2f > screenHeight) {
-                    align = Align.END
-
-                } else if (targetViewRect.centerY() - height / 2f < 0) {
-                    align = Align.START
-
-                }
             }
 
             Position.END -> {
@@ -275,14 +261,6 @@ class Tooltip(
                     layoutParams.width =
                         screenWidth - targetViewRect.right - defaultMargin.roundToInt() - tooltipMargin.roundToInt()
                     changed = true
-                }
-
-                if (targetViewRect.centerY() + height / 2f > screenHeight) {
-                    align = Align.END
-
-                } else if (targetViewRect.centerY() - height / 2f < 0) {
-                    align = Align.START
-
                 }
             }
 
@@ -304,14 +282,12 @@ class Tooltip(
                     val diff = targetViewRect.centerX() + tooltipWidth / 2f - screenWidth
                     adjustedLeft -= diff.toInt()
                     adjustedRight -= diff.toInt()
-                    align = Align.CENTER
                     changed = true
 
                 } else if (targetViewRect.centerX() - tooltipWidth / 2f < 0) {
                     val diff = -(targetViewRect.centerX() - tooltipWidth / 2f)
                     adjustedLeft += diff.toInt()
                     adjustedRight += diff.toInt()
-                    align = Align.CENTER
                     changed = true
                 }
 
@@ -360,13 +336,6 @@ class Tooltip(
         startEnterAnimation()
         handleAutoRemove()
     }
-
-    private fun getAlignOffset(tooltipLength: Int, targetLength: Int): Int =
-        when (align) {
-            Align.END -> targetLength - tooltipLength
-            Align.CENTER -> (targetLength - tooltipLength) / 2
-            Align.START -> 0
-        }
 
     fun close() {
         remove()
@@ -423,14 +392,10 @@ class Tooltip(
             val centerX = targetViewRect.centerX() - x
             val centerY = targetViewRect.centerY() - y
 
-            val arrowSourceX =
-                if (position.isVertical()) centerX + arrowSourceMargin else centerX
-            val arrowTargetX =
-                if (position.isVertical()) centerX + arrowTargetMargin else centerX
-            val arrowSourceY =
-                if (position.isHorizontal()) centerY - arrowSourceMargin else centerY
-            val arrowTargetY =
-                if (position.isHorizontal()) centerY - arrowTargetMargin else centerY
+            val arrowSourceX = if (position.isVertical()) centerX + arrowSourceMargin else centerX
+            val arrowTargetX = if (position.isVertical()) centerX + arrowTargetMargin else centerX
+            val arrowSourceY = if (position.isHorizontal()) centerY - arrowSourceMargin else centerY
+            val arrowTargetY = if (position.isHorizontal()) centerY - arrowTargetMargin else centerY
 
             bubblePath.moveTo(left + cornerRadius / 2f, top)
 
@@ -478,27 +443,27 @@ class Tooltip(
             when (position) {
                 Position.START -> {
                     x = targetViewRect.left - width - tooltipMargin.roundToInt()
-                    y = targetViewRect.top + getAlignOffset(height, targetViewRect.height())
+                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
                 }
 
                 Position.TOP -> {
                     val xMax = screenWidth - width - defaultMargin
 
                     y = targetViewRect.top - height - tooltipMargin.roundToInt()
-                    x = (targetViewRect.left + getAlignOffset(width, targetViewRect.width()))
+                    x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
                         .coerceIn(defaultMargin..xMax)
                 }
 
                 Position.END -> {
                     x = targetViewRect.right + tooltipMargin.roundToInt()
-                    y = targetViewRect.top + getAlignOffset(height, targetViewRect.height())
+                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
                 }
 
                 Position.BOTTOM -> {
                     val xMax = screenWidth - width - defaultMargin
 
                     y = targetViewRect.bottom + tooltipMargin.roundToInt()
-                    x = (targetViewRect.left + getAlignOffset(width, targetViewRect.width()))
+                    x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
                         .coerceIn(defaultMargin..xMax)
                 }
             }
@@ -579,6 +544,7 @@ class Tooltip(
             bubblePath.quadTo(left, top, left + cornerRadius / 2, top)
             bubblePath.close()
         }
+
         override fun setupPosition(targetViewRect: Rect, screenWidth: Int) {
             val x: Int
             val y: Int
@@ -586,28 +552,22 @@ class Tooltip(
             when (position) {
                 Position.START -> {
                     x = -(screenWidth - targetViewRect.right - width) + tooltipMargin.roundToInt()
-                    y = targetViewRect.top + getAlignOffset(height, targetViewRect.height())
+                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
                 }
 
                 Position.TOP -> {
                     y = targetViewRect.top - height - tooltipMargin.roundToInt()
-                    x = -(screenWidth - targetViewRect.right) - getAlignOffset(
-                        width,
-                        targetViewRect.width()
-                    )
+                    x = -(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2
                 }
 
                 Position.END -> {
                     x = -(screenWidth - targetViewRect.left) - tooltipMargin.roundToInt()
-                    y = targetViewRect.top + getAlignOffset(height, targetViewRect.height())
+                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
                 }
 
                 Position.BOTTOM -> {
                     y = targetViewRect.bottom + tooltipMargin.roundToInt()
-                    x = -(screenWidth - targetViewRect.right) - getAlignOffset(
-                        width,
-                        targetViewRect.width()
-                    )
+                    x = -(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2
                 }
             }
 
@@ -630,7 +590,7 @@ class Tooltip(
         private const val MARGIN_SCREEN_BORDER_TOOLTIP_DP = 12f
 
         private const val COLOR_BUBBLE_DEFAULT = 0xFF197327.toInt()
-        private const val COLOR_SHADOW_DEFAULT = 0xFF333338.toInt()//TODO default shadow color
+        private const val COLOR_SHADOW_DEFAULT = 0xFF333338.toInt() //TODO default shadow color
         private const val COLOR_TRANSPARENT = 0x0
     }
 
@@ -643,9 +603,5 @@ class Tooltip(
         fun isHorizontal() = this == START || this == END
 
         fun isVertical() = this == TOP || this == BOTTOM
-    }
-
-    enum class Align {
-        START, CENTER, END
     }
 }
