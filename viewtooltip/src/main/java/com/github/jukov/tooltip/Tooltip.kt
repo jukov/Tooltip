@@ -168,8 +168,16 @@ class Tooltip(
         positioningDelegate.updateBubblePath()
     }
 
+    override fun draw(canvas: Canvas?) {
+        if (bubblePath.isEmpty) return
+        super.draw(canvas)
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        if (bubblePath.isEmpty) return
+
         val bubblePath = bubblePath
         val bubblePaint = bubblePaint
 
