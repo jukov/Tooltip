@@ -68,7 +68,7 @@ class TooltipBuilder {
         this.targetView = targetView
         this.window =
             (fragment as? DialogFragment)?.dialog?.window ?: fragment.requireActivity().window
-        this.tooltip = Tooltip(fragment.requireContext(), tooltipLayout)
+        this.tooltip = Tooltip(fragment.requireContext(), tooltipLayout, )
         handleScrollingParent(targetView)
     }
 
@@ -76,7 +76,7 @@ class TooltipBuilder {
         this.activity = activity
         this.targetView = targetView
         this.window = activity.window
-        this.tooltip = Tooltip(activity, tooltipLayout)
+        this.tooltip = Tooltip(activity, tooltipLayout, )
         handleScrollingParent(targetView)
     }
 
@@ -185,6 +185,12 @@ class TooltipBuilder {
         get() = tooltip.clickToHide
         set(value) {
             tooltip.clickToHide = value
+        }
+
+    var afterCloseListener: ((Tooltip) -> Unit)?
+        get() = tooltip.afterCloseListener
+        set(value) {
+            tooltip.afterCloseListener = value
         }
 
     fun setWithShadow(withShadow: Boolean): TooltipBuilder {

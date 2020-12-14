@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 @Suppress("unused")
 class Tooltip(
     context: Context,
-    view: View,
+    view: View
 ) : FrameLayout(context) {
 
     var arrowWidth: Float = dpToPx(ARROW_WIDTH_DEFAULT_DP, context)
@@ -132,6 +132,8 @@ class Tooltip(
             }
             postInvalidate()
         }
+
+    var afterCloseListener: ((Tooltip) -> Unit)? = null
 
     private val targetViewRect = Rect()
     private val bubblePath = Path()
@@ -341,7 +343,7 @@ class Tooltip(
         remove()
     }
 
-    fun remove() {
+    private fun remove() {
         startExitAnimation(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
@@ -350,11 +352,9 @@ class Tooltip(
         })
     }
 
-    fun removeNow() {
-        if (parent != null) {
-            val parent = parent as ViewGroup
-            parent.removeView(this@Tooltip)
-        }
+    private fun removeNow() {
+        (parent as? ViewGroup)?.removeView(this)
+        afterCloseListener?.invoke(this)
     }
 
     fun closeNow() {
