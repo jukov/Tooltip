@@ -2,7 +2,6 @@ package com.github.jukov.tooltip
 
 import android.animation.Animator
 import android.app.Activity
-import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.Rect
 import android.view.LayoutInflater
@@ -35,6 +34,49 @@ fun showTooltip(
         fragment,
         targetView,
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
+    )
+        .apply { configurator() }
+        .show()
+
+
+fun showTooltip(
+    fragment: Fragment,
+    @IdRes targetViewRes: Int,
+    @LayoutRes tooltipLayoutRes: Int,
+    configurator: TooltipBuilder.() -> Unit,
+): Tooltip =
+    TooltipBuilder(
+        fragment,
+        fragment.requireView().findViewById(targetViewRes),
+        LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
+    )
+        .apply { configurator() }
+        .show()
+
+fun showTooltip(
+    activity: Activity,
+    targetView: View,
+    tooltipLayout: View,
+    configurator: TooltipBuilder.() -> Unit,
+): Tooltip =
+    TooltipBuilder(
+        activity,
+        targetView,
+        tooltipLayout
+    )
+        .apply { configurator() }
+        .show()
+
+fun showTooltip(
+    activity: Activity,
+    targetView: View,
+    @LayoutRes tooltipLayoutRes: Int,
+    configurator: TooltipBuilder.() -> Unit,
+): Tooltip =
+    TooltipBuilder(
+        activity,
+        targetView,
+        LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
         .show()
@@ -87,7 +129,7 @@ class TooltipBuilder {
             }
     }
 
-    private fun findScrollParent(view: View): NestedScrollView? {//TODO test case in scroll parent
+    private fun findScrollParent(view: View): NestedScrollView? {
         return if (view.parent == null || view.parent !is View) {
             null
         } else if (view.parent is NestedScrollView) {
@@ -140,12 +182,12 @@ class TooltipBuilder {
         }
 
     var duration: Long
-        get() = tooltip.durationMillis
+        get() = tooltip.autoHideAfterMillis
         set(value) {
-            tooltip.durationMillis = value
+            tooltip.autoHideAfterMillis = value
         }
 
-    var colorInt: Int
+    var backgroundColorInt: Int
         get() = tooltip.color
         set(value) {
             tooltip.color = value
@@ -155,12 +197,6 @@ class TooltipBuilder {
         get() = tooltip.shadowColor
         set(value) {
             tooltip.shadowColor = value
-        }
-
-    var bubblePaint: Paint
-        get() = tooltip.bubblePaint
-        set(value) {
-            tooltip.bubblePaint = value
         }
 
     var onDisplayListener: ((View) -> Unit)?
@@ -187,12 +223,6 @@ class TooltipBuilder {
             tooltip.clickToHide = value
         }
 
-    var afterCloseListener: ((Tooltip) -> Unit)?
-        get() = tooltip.afterCloseListener
-        set(value) {
-            tooltip.afterCloseListener = value
-        }
-
     fun setWithShadow(withShadow: Boolean): TooltipBuilder {
         tooltip.setWithShadow(withShadow)
         return this
@@ -200,7 +230,7 @@ class TooltipBuilder {
 
     fun setAutoHide(autoHide: Boolean, duration: Long): TooltipBuilder {
         tooltip.autoHide = autoHide
-        tooltip.durationMillis = duration
+        tooltip.autoHideAfterMillis = duration
         return this
     }
 
@@ -213,11 +243,8 @@ class TooltipBuilder {
     }
 
     fun border(color: Int, width: Float): TooltipBuilder {
-        val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        borderPaint.color = color
-        borderPaint.style = Paint.Style.STROKE
-        borderPaint.strokeWidth = width
-        tooltip.borderPaint = borderPaint
+        tooltip.borderColor = color
+        tooltip.borderWidth = width
         return this
     }
 

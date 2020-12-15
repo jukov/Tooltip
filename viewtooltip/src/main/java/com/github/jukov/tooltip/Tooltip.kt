@@ -12,6 +12,7 @@ import android.graphics.RectF
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.github.florent37.viewtooltip.R
 import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
@@ -22,82 +23,52 @@ class Tooltip(
     view: View
 ) : FrameLayout(context) {
 
-    var arrowWidth: Float = dpToPx(ARROW_WIDTH_DEFAULT_DP, context)
-        set(value) {
-            field = value
-            postInvalidate()
-        }
+    var arrowWidth: Float = 0f
+    var arrowHeight: Float = 0f
+    var arrowSourceMargin: Float = 0f
+    var arrowTargetMargin: Float = 0f
 
-    var arrowHeight: Float = dpToPx(ARROW_HEIGHT_DEFAULT_DP, context)
-        set(value) {
-            field = value
-            postInvalidate()
-        }
-
-    var arrowSourceMargin: Float = dpToPx(ARROW_SOURCE_MARGIN_DEFAULT_DP, context)
-        set(value) {
-            field = value
-            postInvalidate()
-        }
-
-    var arrowTargetMargin: Float = dpToPx(ARROW_TARGET_MARGIN_DEFAULT_DP, context)
-        set(value) {
-            field = value
-            postInvalidate()
-        }
-
-    var cornerRadius: Float = dpToPx(CORNER_RADIUS_DEFAULT_DP, context)
-        set(value) {
-            field = value
-            postInvalidate()
-        }
-
-    var shadowPadding: Float = dpToPx(SHADOW_PADDING_DEFAULT_DP, context)
-    var shadowWidth: Float = dpToPx(SHADOW_WIDTH_DEFAULT_DP, context)
-
-    var tooltipMargin: Float = dpToPx(TOOLTIP_MARGIN_DEFAULT_DP, context)
-
-    var tooltipPaddingStart: Float = dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
-    var tooltipPaddingTop: Float = dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
-    var tooltipPaddingEnd: Float = dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
-    var tooltipPaddingBottom: Float = dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
-
-    var color: Int = COLOR_BUBBLE_DEFAULT
-        set(value) {
-            field = value
-            bubblePaint.color = color
-            postInvalidate()
-        }
+    var cornerRadius: Float = 0f
 
     var shadowColor: Int = COLOR_SHADOW_DEFAULT
+    var shadowPadding: Float = 0f
+    var shadowWidth: Float = 0f
+
+    var tooltipMargin: Float = 0f
+
+    var tooltipPaddingStart: Float = 0f
+    var tooltipPaddingTop: Float = 0f
+    var tooltipPaddingEnd: Float = 0f
+    var tooltipPaddingBottom: Float = 0f
+
+    var color: Int
+        get() = bubblePaint.color
         set(value) {
-            field = value
-            postInvalidate()
+            bubblePaint.color = value
         }
 
-    var bubblePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = COLOR_BUBBLE_DEFAULT
-        style = Paint.Style.FILL
-    }
+    var borderColor: Int
+        get() = borderPaint.color
         set(value) {
-            field = value
-            setLayerType(LAYER_TYPE_SOFTWARE, value)
-            postInvalidate()
+            borderPaint.color = value
         }
 
-    var borderPaint: Paint? = null
+    var borderWidth: Float
+        get() = borderPaint.strokeWidth
         set(value) {
-            field = value
-            postInvalidate()
+            borderPaint.strokeWidth = value
         }
+
+    private var borderEnabled: Boolean = false
 
     var clickToHide = false
 
-    var autoHide = false
-    var durationMillis: Long = 0
+    internal var autoHide = false
+    internal var autoHideAfterMillis: Long = 0
 
     var onDisplayListener: ((View) -> Unit)? = null
     var onHideListener: ((View) -> Unit)? = null
+    var afterHideListener: ((View) -> Unit)? = null
 
     var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
 
@@ -133,11 +104,19 @@ class Tooltip(
             postInvalidate()
         }
 
-    var afterCloseListener: ((Tooltip) -> Unit)? = null
-
     private val targetViewRect = Rect()
     private val bubblePath = Path()
     private val bubbleRect = RectF()
+
+    private val bubblePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        .apply {
+            style = Paint.Style.FILL
+        }
+
+    private val borderPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        .apply {
+            style = Paint.Style.STROKE
+        }
 
     private val positioningDelegate: PositioningDelegate =
         if (layoutDirection == LAYOUT_DIRECTION_RTL) {
@@ -151,6 +130,46 @@ class Tooltip(
         setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint)
         setWithShadow(true)
         addView(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        val typedArray = context.obtainStyledAttributes(
+            R.style.Widget_Tooltip,
+            R.styleable.Tooltip
+        )
+
+        arrowWidth = typedArray.getDimension(R.styleable.Tooltip_arrowWidth, dpToPx(ARROW_WIDTH_DEFAULT_DP, context))
+        arrowHeight = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        arrowSourceMargin = typedArray.getDimension(R.styleable.Tooltip_arrowSourceMargin, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        arrowTargetMargin = typedArray.getDimension(R.styleable.Tooltip_arrowTargetMargin, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        cornerRadius = typedArray.getDimension(R.styleable.Tooltip_cornerRadius, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        tooltipMargin = typedArray.getDimension(R.styleable.Tooltip_tooltipMargin, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        tooltipPaddingStart = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingStart, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        tooltipPaddingTop = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingTop, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        tooltipPaddingEnd = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingEnd, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        tooltipPaddingBottom = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingBottom, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        bubblePaint.color = typedArray.getColor(R.styleable.Tooltip_backgroundColor, COLOR_BUBBLE_DEFAULT)
+
+        val shadowEnabled = typedArray.getBoolean(R.styleable.Tooltip_shadowEnabled, true)
+
+        if (shadowEnabled) {
+            shadowColor = typedArray.getColor(R.styleable.Tooltip_shadowColor, COLOR_SHADOW_DEFAULT)
+            shadowPadding = typedArray.getDimension(R.styleable.Tooltip_shadowPadding, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+            shadowWidth = typedArray.getDimension(R.styleable.Tooltip_shadowWidth, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+
+            bubblePaint.setShadowLayer(shadowWidth, 0f, 0f, shadowColor)
+        }
+
+        borderEnabled = typedArray.getBoolean(R.styleable.Tooltip_borderEnabled, false)
+
+        if (borderEnabled) {
+            borderPaint.color = typedArray.getColor(R.styleable.Tooltip_borderColor, COLOR_TRANSPARENT)
+            borderPaint.strokeWidth = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, 0f)
+        }
+
+        clickToHide = typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true)
+        autoHide = typedArray.getBoolean(R.styleable.Tooltip_autoHide, false)
+        autoHideAfterMillis = typedArray.getInteger(R.styleable.Tooltip_autoHideAfterMillis, 0).toLong()
+
+        typedArray.recycle()
     }
 
     override fun onSizeChanged(width: Int, height: Int, oldw: Int, oldh: Int) {
@@ -179,9 +198,9 @@ class Tooltip(
 
         canvas.drawPath(bubblePath, bubblePaint)
 
-        val borderPaint = borderPaint ?: return
-
-        canvas.drawPath(bubblePath, borderPaint)
+        if (borderEnabled) {
+            canvas.drawPath(bubblePath, borderPaint)
+        }
     }
 
     fun setWithShadow(withShadow: Boolean) {
@@ -208,9 +227,6 @@ class Tooltip(
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
                 animatorListener.onAnimationEnd(animation)
-                if (onHideListener != null) {
-                    onHideListener?.invoke(this@Tooltip)
-                }
             }
         })
     }
@@ -224,7 +240,7 @@ class Tooltip(
             }
         }
         if (autoHide) {
-            postDelayed({ remove() }, durationMillis)
+            postDelayed({ remove() }, autoHideAfterMillis)
         }
     }
 
@@ -344,6 +360,7 @@ class Tooltip(
     }
 
     private fun remove() {
+        onHideListener?.invoke(this@Tooltip)
         startExitAnimation(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
@@ -354,7 +371,7 @@ class Tooltip(
 
     private fun removeNow() {
         (parent as? ViewGroup)?.removeView(this)
-        afterCloseListener?.invoke(this)
+        afterHideListener?.invoke(this)
     }
 
     fun closeNow() {
@@ -589,8 +606,8 @@ class Tooltip(
 
         private const val MARGIN_SCREEN_BORDER_TOOLTIP_DP = 12f
 
-        private const val COLOR_BUBBLE_DEFAULT = 0xFF197327.toInt()
-        private const val COLOR_SHADOW_DEFAULT = 0xFF333338.toInt() //TODO default shadow color
+        private const val COLOR_BUBBLE_DEFAULT = 0xFF4CAF50.toInt()
+        private const val COLOR_SHADOW_DEFAULT = 0xFF444444.toInt()
         private const val COLOR_TRANSPARENT = 0x0
     }
 

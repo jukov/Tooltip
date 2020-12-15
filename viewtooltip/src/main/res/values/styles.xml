@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="Tooltip">
+        <attr name="arrowWidth" format="dimension" />
+        <attr name="arrowHeight" format="dimension" />
+        <attr name="arrowSourceMargin" format="dimension" />
+        <attr name="arrowTargetMargin" format="dimension" />
+
+        <attr name="cornerRadius" format="dimension" />
+
+        <attr name="tooltipMargin" format="dimension" />
+        <attr name="tooltipPaddingStart" format="dimension" />
+        <attr name="tooltipPaddingTop" format="dimension" />
+        <attr name="tooltipPaddingEnd" format="dimension" />
+        <attr name="tooltipPaddingBottom" format="dimension" />
+
+        <attr name="backgroundColor" format="color" />
+
+        <attr name="shadowEnabled" format="boolean" />
+        <attr name="shadowColor" format="color" />
+        <attr name="shadowPadding" format="dimension" />
+        <attr name="shadowWidth" format="dimension" />
+
+        <attr name="borderEnabled" format="boolean" />
+        <attr name="borderColor" format="color" />
+        <attr name="borderWidth" format="dimension" />
+
+        <attr name="clickToHide" format="boolean" />
+        <attr name="autoHide" format="boolean" />
+        <attr name="autoHideAfterMillis" format="integer" />
+    </declare-styleable>
+
+    <style name="Widget.Tooltip" parent="Widget.Tooltip.Default"/>
+
+    <style name="Widget.Tooltip.Default">
+        <item name="arrowWidth">16dp</item>
+        <item name="arrowHeight">8dp</item>
+        <item name="arrowSourceMargin">0dp</item>
+        <item name="arrowTargetMargin">0dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="shadowPadding">2dp</item>
+        <item name="shadowWidth">4dp</item>
+        <item name="tooltipMargin">0dp</item>
+        <item name="tooltipPaddingStart">8dp</item>
+        <item name="tooltipPaddingTop">8dp</item>
+        <item name="tooltipPaddingEnd">8dp</item>
+        <item name="tooltipPaddingBottom">8dp</item>
+        <item name="backgroundColor">@color/background_default</item>
+        <item name="shadowColor">@color/shadow_default</item>
+        <item name="borderEnabled">false</item>
+        <item name="borderColor">@android:color/transparent</item>
+        <item name="borderWidth">0dp</item>
+        <item name="clickToHide">true</item>
+        <item name="autoHide">false</item>
+        <item name="autoHideAfterMillis">0</item>
+    </style>
+
+</resources>

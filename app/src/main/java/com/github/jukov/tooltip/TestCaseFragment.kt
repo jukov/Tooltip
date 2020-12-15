@@ -56,8 +56,10 @@ class TestCaseFragment : Fragment() {
             position = tooltipConfig.position
             clickToHide = true
             setAutoHide(false, 0)
-            afterCloseListener = {
-                Toast.makeText(requireContext(), "Closed", Toast.LENGTH_LONG).show()
+            onHideListener = {
+                context?.let { context ->
+                    Toast.makeText(context, "Closed", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
