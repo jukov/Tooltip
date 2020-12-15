@@ -118,7 +118,7 @@ class Tooltip(
         }
 
     private val positioningDelegate: PositioningDelegate =
-        if (layoutDirection == LAYOUT_DIRECTION_RTL) {
+        if (context.resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL) {
             RtlPositioningDelegate()
         } else {
             LtrPositioningDelegate()
@@ -420,6 +420,7 @@ class Tooltip(
                 bubblePath.lineTo(arrowTargetX, bubbleRect.top)
                 bubblePath.lineTo(arrowSourceX + arrowWidth / 2, top)
             }
+
             bubblePath.lineTo(right - cornerRadius / 2f, top)
             bubblePath.quadTo(right, top, right, top + cornerRadius / 2)
 
@@ -428,6 +429,7 @@ class Tooltip(
                 bubblePath.lineTo(bubbleRect.right, arrowTargetY)
                 bubblePath.lineTo(right, arrowSourceY + arrowWidth / 2)
             }
+
             bubblePath.lineTo(right, bottom - cornerRadius / 2)
             bubblePath.quadTo(right, bottom, right - cornerRadius / 2, bottom)
 
@@ -436,6 +438,7 @@ class Tooltip(
                 bubblePath.lineTo(arrowTargetX, bubbleRect.bottom)
                 bubblePath.lineTo(arrowSourceX - arrowWidth / 2, bottom)
             }
+
             bubblePath.lineTo(left + cornerRadius / 2, bottom)
             bubblePath.quadTo(left, bottom, left, bottom - cornerRadius / 2)
 
@@ -511,15 +514,12 @@ class Tooltip(
             val bottom = bubbleRect.bottom - spacingBottom
 
             val centerX = targetViewRect.centerX() - x
+            val centerY = targetViewRect.centerY() - y
 
-            val arrowSourceX =
-                if (position.isVertical()) centerX + arrowSourceMargin else centerX
-            val arrowTargetX =
-                if (position.isVertical()) centerX + arrowTargetMargin else centerX
-            val arrowSourceY =
-                if (position.isHorizontal()) bottom / 2f - arrowSourceMargin else bottom / 2f
-            val arrowTargetY =
-                if (position.isHorizontal()) bottom / 2f - arrowTargetMargin else bottom / 2f
+            val arrowSourceX = if (position.isVertical()) centerX + arrowSourceMargin else centerX
+            val arrowTargetX = if (position.isVertical()) centerX + arrowTargetMargin else centerX
+            val arrowSourceY = if (position.isHorizontal()) centerY - arrowSourceMargin else centerY
+            val arrowTargetY = if (position.isHorizontal()) centerY - arrowTargetMargin else centerY
 
             bubblePath.moveTo(left + cornerRadius / 2f, top)
 
@@ -565,6 +565,8 @@ class Tooltip(
             val x: Int
             val y: Int
 
+            val defaultMargin = dpToPx(MARGIN_SCREEN_BORDER_TOOLTIP_DP, context).toInt()
+
             when (position) {
                 Position.START -> {
                     x = -(screenWidth - targetViewRect.right - width) + tooltipMargin.roundToInt()
@@ -572,8 +574,11 @@ class Tooltip(
                 }
 
                 Position.TOP -> {
+                    val xMax = -(screenWidth - width - defaultMargin)
+
                     y = targetViewRect.top - height - tooltipMargin.roundToInt()
-                    x = -(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2
+                    x = (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
+                        .coerceIn(xMax, -defaultMargin)
                 }
 
                 Position.END -> {
@@ -582,8 +587,11 @@ class Tooltip(
                 }
 
                 Position.BOTTOM -> {
+                    val xMax = -(screenWidth - width - defaultMargin)
+
                     y = targetViewRect.bottom + tooltipMargin.roundToInt()
-                    x = -(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2
+                    x = (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
+                        .coerceIn(xMax, -defaultMargin)
                 }
             }
 
