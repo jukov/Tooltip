@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.jukov.tooltip">
+    package="com.github.jukov.tooltip.sample">
 
     <application
-        android:name="com.github.jukov.tooltip.SampleApp"
+        android:name="com.github.jukov.tooltip.sample.SampleApp"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.github.jukov.tooltip.MainActivity">
+        <activity android:name="com.github.jukov.tooltip.sample.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".TestCasesActivity"/>
+        <activity android:name=".sample.TestCasesActivity"/>
     </application>
 
 </manifest>

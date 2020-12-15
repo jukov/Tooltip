@@ -1,6 +1,7 @@
-package com.github.jukov.tooltip
+package com.github.jukov.tooltip.sample
 
 import android.os.Parcelable
+import com.github.jukov.tooltip.Tooltip
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

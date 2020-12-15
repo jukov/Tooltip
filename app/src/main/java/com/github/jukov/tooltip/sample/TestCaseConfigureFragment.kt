@@ -1,6 +1,7 @@
-package com.github.jukov.tooltip
+package com.github.jukov.tooltip.sample
 
-import com.github.jukov.tooltip.databinding.TestCaseConfiguratorBinding
+import com.github.jukov.tooltip.Tooltip
+import com.github.jukov.tooltip.sample.databinding.TestCaseConfiguratorBinding
 
 class TestCaseConfigureFragment : BindingFragment<TestCaseConfiguratorBinding>() {
 

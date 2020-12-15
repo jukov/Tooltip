@@ -1,4 +1,4 @@
-package com.github.jukov.tooltip
+package com.github.jukov.tooltip.sample
 
 import android.content.Context
 import android.content.Intent

@@ -17,22 +17,22 @@ dependencies {
 ext {
     bintrayRepo = 'maven'
     bintrayName = 'viewtooltip'
-    orgName = 'florent37'
+    orgName = 'jukov'
 
-    publishedGroupId = 'com.github.florent37'
-    libraryName = 'ViewTooltip'
-    artifact = 'viewtooltip'
+    publishedGroupId = 'com.github.jukov'
+    libraryName = 'Tooltip'
+    artifact = 'tooltip'
 
-    libraryDescription = 'ViewTooltip'
+    libraryDescription = 'Tooltip'
 
-    siteUrl = 'https://github.com/florent37/ViewTooltip'
-    gitUrl = 'https://github.com/florent37/ViewTooltip.git'
+    siteUrl = 'https://github.com/jukov/Tooltip'
+    gitUrl = 'https://github.com/jukov/Tooltip.git'
 
     libraryVersion = rootProject.ext.libraryVersion
 
-    developerId = 'florent37'
-    developerName = 'florent37'
-    developerEmail = 'champigny.florent@gmail.com'
+    developerId = 'jukov'
+    developerName = 'jukov'
+    developerEmail = 'a@jukov.info'
 
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'

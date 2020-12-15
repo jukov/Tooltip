@@ -1,8 +1,8 @@
-package com.github.jukov.tooltip
+package com.github.jukov.tooltip.sample
 
 import android.os.Bundle
 import android.widget.Toast
-import com.github.jukov.tooltip.databinding.ActivityMainBinding
+import com.github.jukov.tooltip.sample.databinding.ActivityMainBinding
 
 class MainActivity : BindingActivity<ActivityMainBinding>() {
 
