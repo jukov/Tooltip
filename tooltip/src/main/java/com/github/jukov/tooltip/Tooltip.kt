@@ -137,22 +137,22 @@ class Tooltip(
 
         arrowWidth = typedArray.getDimension(R.styleable.Tooltip_arrowWidth, dpToPx(ARROW_WIDTH_DEFAULT_DP, context))
         arrowHeight = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        arrowSourceMargin = typedArray.getDimension(R.styleable.Tooltip_arrowSourceMargin, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        arrowTargetMargin = typedArray.getDimension(R.styleable.Tooltip_arrowTargetMargin, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        cornerRadius = typedArray.getDimension(R.styleable.Tooltip_cornerRadius, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        tooltipMargin = typedArray.getDimension(R.styleable.Tooltip_tooltipMargin, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        tooltipPaddingStart = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingStart, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        tooltipPaddingTop = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingTop, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        tooltipPaddingEnd = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingEnd, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        tooltipPaddingBottom = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingBottom, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+        arrowSourceMargin = typedArray.getDimension(R.styleable.Tooltip_arrowSourceMargin, dpToPx(ARROW_SOURCE_MARGIN_DEFAULT_DP, context))
+        arrowTargetMargin = typedArray.getDimension(R.styleable.Tooltip_arrowTargetMargin, dpToPx(ARROW_TARGET_MARGIN_DEFAULT_DP, context))
+        cornerRadius = typedArray.getDimension(R.styleable.Tooltip_cornerRadius, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
+        tooltipMargin = typedArray.getDimension(R.styleable.Tooltip_tooltipMargin, dpToPx(TOOLTIP_MARGIN_DEFAULT_DP, context))
+        tooltipPaddingStart = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingStart, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
+        tooltipPaddingTop = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingTop, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
+        tooltipPaddingEnd = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingEnd, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
+        tooltipPaddingBottom = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingBottom, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
         bubblePaint.color = typedArray.getColor(R.styleable.Tooltip_backgroundColor, COLOR_BUBBLE_DEFAULT)
 
         val shadowEnabled = typedArray.getBoolean(R.styleable.Tooltip_shadowEnabled, true)
 
         if (shadowEnabled) {
             shadowColor = typedArray.getColor(R.styleable.Tooltip_shadowColor, COLOR_SHADOW_DEFAULT)
-            shadowPadding = typedArray.getDimension(R.styleable.Tooltip_shadowPadding, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-            shadowWidth = typedArray.getDimension(R.styleable.Tooltip_shadowWidth, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
+            shadowPadding = typedArray.getDimension(R.styleable.Tooltip_shadowPadding, dpToPx(SHADOW_PADDING_DEFAULT_DP, context))
+            shadowWidth = typedArray.getDimension(R.styleable.Tooltip_shadowWidth, dpToPx(SHADOW_WIDTH_DEFAULT_DP, context))
 
             bubblePaint.setShadowLayer(shadowWidth, 0f, 0f, shadowColor)
         }

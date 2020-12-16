@@ -53,9 +53,9 @@ class TestCaseFragment : Fragment() {
             tooltipLayoutRes = when (tooltipConfig.viewType) {
                 ViewType.LARGE_TEXT -> R.layout.tooltip_text_long
                 ViewType.SMALL -> R.layout.tooltip_icon
-            }
-        ) {
+            },
             position = tooltipConfig.position
+        ) {
             clickToHide = true
             setAutoHide(false, 0)
             onHideListener = {

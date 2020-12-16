@@ -18,24 +18,32 @@ fun showTooltip(
     fragment: Fragment,
     targetView: View,
     tooltipLayout: View,
-    configurator: TooltipBuilder.() -> Unit,
+    position: Tooltip.Position,
+    configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(fragment, targetView, tooltipLayout)
-        .apply { configurator() }
+        .apply {
+            this.position = position
+            configurator()
+        }
         .show()
 
 fun showTooltip(
     fragment: Fragment,
     targetView: View,
     @LayoutRes tooltipLayoutRes: Int,
-    configurator: TooltipBuilder.() -> Unit,
+    position: Tooltip.Position,
+    configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         fragment,
         targetView,
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
     )
-        .apply { configurator() }
+        .apply {
+            this.position = position
+            configurator()
+        }
         .show()
 
 
@@ -43,56 +51,72 @@ fun showTooltip(
     fragment: Fragment,
     @IdRes targetViewRes: Int,
     @LayoutRes tooltipLayoutRes: Int,
-    configurator: TooltipBuilder.() -> Unit,
+    position: Tooltip.Position,
+    configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         fragment,
         fragment.requireView().findViewById(targetViewRes),
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
     )
-        .apply { configurator() }
+        .apply {
+            this.position = position
+            configurator()
+        }
         .show()
 
 fun showTooltip(
     activity: Activity,
     targetView: View,
     tooltipLayout: View,
-    configurator: TooltipBuilder.() -> Unit,
+    position: Tooltip.Position,
+    configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         activity,
         targetView,
         tooltipLayout
     )
-        .apply { configurator() }
+        .apply {
+            this.position = position
+            configurator()
+        }
         .show()
 
 fun showTooltip(
     activity: Activity,
     targetView: View,
     @LayoutRes tooltipLayoutRes: Int,
-    configurator: TooltipBuilder.() -> Unit,
+    position: Tooltip.Position,
+    configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         activity,
         targetView,
         LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
-        .apply { configurator() }
+        .apply {
+            this.position = position
+            configurator()
+        }
         .show()
 
 fun showTooltip(
     activity: Activity,
     @IdRes targetViewRes: Int,
     @LayoutRes tooltipLayoutRes: Int,
-    configurator: TooltipBuilder.() -> Unit,
+    position: Tooltip.Position,
+    configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         activity,
         activity.findViewById(targetViewRes),
         LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
-        .apply { configurator() }
+        .apply {
+            this.position = position
+            configurator()
+        }
         .show()
 
 @Suppress("unused")
