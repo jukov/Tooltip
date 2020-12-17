@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
@@ -70,6 +71,7 @@ class Tooltip(
     var afterHideListener: ((View) -> Unit)? = null
 
     var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
+    private val dimAnimation: TooltipAnimation = FadeTooltipAnimation()
 
     var position = Position.BOTTOM
         set(value) {
@@ -124,6 +126,8 @@ class Tooltip(
             LtrPositioningDelegate()
         }
 
+    private val dimView: DimView = DimView(context)
+
     init {
         setWillNotDraw(false)
         setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint)
@@ -160,13 +164,24 @@ class Tooltip(
         borderEnabled = typedArray.getBoolean(R.styleable.Tooltip_borderEnabled, false)
 
         if (borderEnabled) {
-            borderPaint.color = typedArray.getColor(R.styleable.Tooltip_borderColor, COLOR_TRANSPARENT)
+            borderPaint.color = typedArray.getColor(R.styleable.Tooltip_borderColor, Color.TRANSPARENT)
             borderPaint.strokeWidth = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, 0f)
         }
 
         clickToHide = typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true)
         autoHide = typedArray.getBoolean(R.styleable.Tooltip_autoHide, false)
         autoHideAfterMillis = typedArray.getInteger(R.styleable.Tooltip_autoHideAfterMillis, 0).toLong()
+
+        if (typedArray.getBoolean(R.styleable.Tooltip_dimEnabled, false)) {
+
+            val dimColor = typedArray.getColor(R.styleable.Tooltip_dimColor, Color.TRANSPARENT)
+            val dimCornerRadius = typedArray.getDimension(R.styleable.Tooltip_dimTargetViewCornerRadius, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
+            val dimPadding = typedArray.getDimension(R.styleable.Tooltip_dimTargetViewPadding, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
+
+            dimView.cornerRadius = dimCornerRadius
+            dimView.padding = dimPadding
+            dimView.setDimColor(dimColor)
+        }
 
         typedArray.recycle()
     }
@@ -206,11 +221,12 @@ class Tooltip(
         if (withShadow) {
             bubblePaint.setShadowLayer(shadowWidth, 0f, 0f, shadowColor)
         } else {
-            bubblePaint.setShadowLayer(0f, 0f, 0f, COLOR_TRANSPARENT)
+            bubblePaint.setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT)
         }
     }
 
     private fun startEnterAnimation() {
+        dimAnimation.animateEnter(dimView, null)
         tooltipAnimation.animateEnter(this, object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
@@ -222,6 +238,7 @@ class Tooltip(
     }
 
     private fun startExitAnimation(animatorListener: Animator.AnimatorListener) {
+        dimAnimation.animateExit(dimView, null)
         tooltipAnimation.animateExit(this, object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
@@ -241,6 +258,19 @@ class Tooltip(
         if (autoHide) {
             postDelayed({ remove() }, autoHideAfterMillis)
         }
+    }
+
+    internal fun addToParent(viewGroup: ViewGroup) {
+        viewGroup.addView(
+            dimView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        viewGroup.addView(
+            this,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     fun show(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
@@ -350,6 +380,8 @@ class Tooltip(
         )
         positioningDelegate.updateBubblePath()
 
+        dimView.setTargetViewRect(targetViewRect)
+
         startEnterAnimation()
         handleAutoRemove()
     }
@@ -369,6 +401,7 @@ class Tooltip(
     }
 
     private fun removeNow() {
+        (parent as? ViewGroup)?.removeView(dimView)
         (parent as? ViewGroup)?.removeView(this)
         afterHideListener?.invoke(this)
     }
@@ -615,7 +648,6 @@ class Tooltip(
 
         private const val COLOR_BUBBLE_DEFAULT = 0xFF4CAF50.toInt()
         private const val COLOR_SHADOW_DEFAULT = 0xFF444444.toInt()
-        private const val COLOR_TRANSPARENT = 0x0
     }
 
     enum class Position {

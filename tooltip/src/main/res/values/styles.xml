@@ -29,9 +29,17 @@
         <attr name="clickToHide" format="boolean" />
         <attr name="autoHide" format="boolean" />
         <attr name="autoHideAfterMillis" format="integer" />
+
+        <attr name="dimEnabled" format="boolean" />
+        <attr name="dimColor" format="color" />
+        <attr name="dimTargetViewCornerRadius" format="dimension" />
+        <attr name="dimTargetViewPadding" format="dimension" />
     </declare-styleable>
 
-    <style name="Widget.Tooltip" parent="Widget.Tooltip.Default"/>
+    <style name="Widget.Tooltip" parent="Widget.Tooltip.Default">
+        <item name="dimEnabled">true</item>
+        <item name="dimColor">#66000000</item>
+    </style>
 
     <style name="Widget.Tooltip.Default">
         <item name="arrowWidth">16dp</item>
@@ -54,6 +62,10 @@
         <item name="clickToHide">true</item>
         <item name="autoHide">false</item>
         <item name="autoHideAfterMillis">0</item>
+        <item name="dimEnabled">false</item>
+        <item name="dimColor">@android:color/transparent</item>
+        <item name="dimTargetViewCornerRadius">8dp</item>
+        <item name="dimTargetViewPadding">1dp</item>
     </style>
 
 </resources>

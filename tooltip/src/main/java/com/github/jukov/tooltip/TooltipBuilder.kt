@@ -293,11 +293,7 @@ class TooltipBuilder {
                 targetViewRect.left -= rootGlobalOffset.x
                 targetViewRect.right -= rootGlobalOffset.x
 
-                decorView.addView(
-                    tooltip,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
+                tooltip.addToParent(decorView)
 
                 tooltip.doOnPreDraw {
                     tooltip.show(targetViewRect, decorView.width, decorView.height)
