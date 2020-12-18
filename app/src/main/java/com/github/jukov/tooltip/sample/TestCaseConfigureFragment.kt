@@ -22,6 +22,9 @@ class TestCaseConfigureFragment : BindingFragment<TestCaseConfiguratorBinding>()
                     radioTargetViewPositionTopEnd.id -> TargetViewPosition.TOP_END
                     radioTargetViewPositionBottomStart.id -> TargetViewPosition.BOTTOM_START
                     radioTargetViewPositionBottomEnd.id -> TargetViewPosition.BOTTOM_END
+                    radioTargetViewPositionVerticalScroll.id -> TargetViewPosition.VERTICAL_SCROLL
+                    radioTargetViewPositionVerticalNestedScroll.id -> TargetViewPosition.VERTICAL_SCROLL
+                    radioTargetViewPositionHorizontalScroll.id -> TargetViewPosition.HORIZONTAL_SCROLL
                     else -> TargetViewPosition.CENTER
                 },
                 position = when (groupPosition.checkedRadioButtonId) {

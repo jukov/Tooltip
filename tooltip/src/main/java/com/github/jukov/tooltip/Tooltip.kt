@@ -13,6 +13,7 @@ import android.graphics.RectF
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.StyleRes
 import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
@@ -20,6 +21,7 @@ import kotlin.math.roundToInt
 @Suppress("unused")
 class Tooltip(
     context: Context,
+    @StyleRes themeRes: Int,
     view: View
 ) : FrameLayout(context) {
 
@@ -62,6 +64,8 @@ class Tooltip(
     private var borderEnabled: Boolean = false
 
     var clickToHide = false
+
+    var cancelable = false
 
     internal var autoHide = false
     internal var autoHideAfterMillis: Long = 0
@@ -126,6 +130,9 @@ class Tooltip(
             LtrPositioningDelegate()
         }
 
+    var dimEnabled: Boolean = false
+        private set
+
     private val dimView: DimView = DimView(context)
 
     init {
@@ -134,8 +141,20 @@ class Tooltip(
         setWithShadow(true)
         addView(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
+        dimView.setOnClickListener {
+            if (cancelable) {
+                close()
+            }
+        }
+
+        val themeRes = if (themeRes == 0) {
+            R.style.Widget_Tooltip
+        } else {
+            themeRes
+        }
+
         val typedArray = context.obtainStyledAttributes(
-            R.style.Widget_Tooltip,
+            themeRes,
             R.styleable.Tooltip
         )
 
@@ -168,12 +187,13 @@ class Tooltip(
             borderPaint.strokeWidth = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, 0f)
         }
 
+        cancelable = typedArray.getBoolean(R.styleable.Tooltip_cancelable, true)
         clickToHide = typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true)
         autoHide = typedArray.getBoolean(R.styleable.Tooltip_autoHide, false)
         autoHideAfterMillis = typedArray.getInteger(R.styleable.Tooltip_autoHideAfterMillis, 0).toLong()
 
-        if (typedArray.getBoolean(R.styleable.Tooltip_dimEnabled, false)) {
-
+        dimEnabled = typedArray.getBoolean(R.styleable.Tooltip_dimEnabled, false)
+        if (dimEnabled) {
             val dimColor = typedArray.getColor(R.styleable.Tooltip_dimColor, Color.TRANSPARENT)
             val dimCornerRadius = typedArray.getDimension(R.styleable.Tooltip_dimTargetViewCornerRadius, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
             val dimPadding = typedArray.getDimension(R.styleable.Tooltip_dimTargetViewPadding, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
@@ -251,21 +271,23 @@ class Tooltip(
         if (clickToHide) {
             setOnClickListener {
                 if (clickToHide) {
-                    remove()
+                    this.close()
                 }
             }
         }
         if (autoHide) {
-            postDelayed({ remove() }, autoHideAfterMillis)
+            postDelayed({ this.close() }, autoHideAfterMillis)
         }
     }
 
     internal fun addToParent(viewGroup: ViewGroup) {
-        viewGroup.addView(
-            dimView,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        if (dimEnabled) {
+            viewGroup.addView(
+                dimView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
         viewGroup.addView(
             this,
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -387,27 +409,19 @@ class Tooltip(
     }
 
     fun close() {
-        remove()
-    }
-
-    private fun remove() {
         onHideListener?.invoke(this@Tooltip)
         startExitAnimation(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                removeNow()
+                this@Tooltip.closeNow()
             }
         })
     }
 
-    private fun removeNow() {
+    fun closeNow() {
         (parent as? ViewGroup)?.removeView(dimView)
         (parent as? ViewGroup)?.removeView(this)
         afterHideListener?.invoke(this)
-    }
-
-    fun closeNow() {
-        removeNow()
     }
 
     private interface PositioningDelegate {

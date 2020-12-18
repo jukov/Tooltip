@@ -75,6 +75,24 @@
             android:layout_height="wrap_content"
             android:text="Bottom End" />
 
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_vertical_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vertical Scroll" />
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_vertical_nested_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vertical Nested Scroll" />
+
+        <RadioButton
+            android:id="@+id/radio_target_view_position_horizontal_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Horizontal Scroll" />
     </RadioGroup>
 
     <TextView

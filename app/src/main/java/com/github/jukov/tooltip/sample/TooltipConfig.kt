@@ -21,5 +21,8 @@ enum class TargetViewPosition {
     TOP_START,
     TOP_END,
     BOTTOM_START,
-    BOTTOM_END
+    BOTTOM_END,
+    VERTICAL_SCROLL,
+    VERTICAL_NESTED_SCROLL,
+    HORIZONTAL_SCROLL
 }

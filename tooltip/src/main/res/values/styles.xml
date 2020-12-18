@@ -26,6 +26,7 @@
         <attr name="borderColor" format="color" />
         <attr name="borderWidth" format="dimension" />
 
+        <attr name="cancelable" format="boolean" />
         <attr name="clickToHide" format="boolean" />
         <attr name="autoHide" format="boolean" />
         <attr name="autoHideAfterMillis" format="integer" />
@@ -37,7 +38,7 @@
     </declare-styleable>
 
     <style name="Widget.Tooltip" parent="Widget.Tooltip.Default">
-        <item name="dimEnabled">true</item>
+<!--        <item name="dimEnabled">true</item>-->
         <item name="dimColor">#66000000</item>
     </style>
 
@@ -59,6 +60,7 @@
         <item name="borderEnabled">false</item>
         <item name="borderColor">@android:color/transparent</item>
         <item name="borderWidth">0dp</item>
+        <item name="cancelable">true</item>
         <item name="clickToHide">true</item>
         <item name="autoHide">false</item>
         <item name="autoHideAfterMillis">0</item>

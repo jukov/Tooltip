@@ -38,6 +38,9 @@ class TestCaseFragment : Fragment() {
                 TargetViewPosition.TOP_END -> R.layout.test_case_top_end
                 TargetViewPosition.BOTTOM_START -> R.layout.test_case_bottom_start
                 TargetViewPosition.BOTTOM_END -> R.layout.test_case_bottom_end
+                TargetViewPosition.VERTICAL_SCROLL -> R.layout.test_case_vertical_scroll_view
+                TargetViewPosition.VERTICAL_NESTED_SCROLL -> R.layout.test_case_vertical_nested_scroll_view
+                TargetViewPosition.HORIZONTAL_SCROLL -> R.layout.test_case_horizontal_scroll_view
             },
             container,
             false
@@ -54,10 +57,8 @@ class TestCaseFragment : Fragment() {
                 ViewType.LARGE_TEXT -> R.layout.tooltip_text_long
                 ViewType.SMALL -> R.layout.tooltip_icon
             },
-            position = tooltipConfig.position
         ) {
-            clickToHide = true
-            setAutoHide(false, 0)
+            position = tooltipConfig.position
             onHideListener = {
                 context?.let { context ->
                     Toast.makeText(context, "Closed", Toast.LENGTH_LONG).show()
