@@ -1,23 +1,18 @@
+@file:Suppress("unused")
+
 package com.github.jukov.tooltip
 
 import android.animation.Animator
 import android.app.Activity
-import android.graphics.Point
-import android.graphics.Rect
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.Window
-import android.widget.HorizontalScrollView
-import android.widget.ScrollView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 
-fun showTooltip(
+fun makeTooltip(
     fragment: Fragment,
     targetView: View,
     tooltipLayout: View,
@@ -25,9 +20,9 @@ fun showTooltip(
 ): Tooltip =
     TooltipBuilder(fragment, targetView, tooltipLayout)
         .apply { configurator() }
-        .show()
+        .build()
 
-fun showTooltip(
+fun makeTooltip(
     fragment: Fragment,
     targetView: View,
     @LayoutRes tooltipLayoutRes: Int,
@@ -39,9 +34,9 @@ fun showTooltip(
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
-        .show()
+        .build()
 
-fun showTooltip(
+fun makeTooltip(
     fragment: Fragment,
     @IdRes targetViewRes: Int,
     @LayoutRes tooltipLayoutRes: Int,
@@ -53,9 +48,9 @@ fun showTooltip(
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
-        .show()
+        .build()
 
-fun showTooltip(
+fun makeTooltip(
     activity: Activity,
     targetView: View,
     tooltipLayout: View,
@@ -67,9 +62,9 @@ fun showTooltip(
         tooltipLayout
     )
         .apply { configurator() }
-        .show()
+        .build()
 
-fun showTooltip(
+fun makeTooltip(
     activity: Activity,
     targetView: View,
     @LayoutRes tooltipLayoutRes: Int,
@@ -81,9 +76,9 @@ fun showTooltip(
         LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
-        .show()
+        .build()
 
-fun showTooltip(
+fun makeTooltip(
     activity: Activity,
     @IdRes targetViewRes: Int,
     @LayoutRes tooltipLayoutRes: Int,
@@ -95,7 +90,7 @@ fun showTooltip(
         LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
-        .show()
+        .build()
 
 @Suppress("unused")
 class TooltipBuilder {
@@ -106,11 +101,6 @@ class TooltipBuilder {
     private val window: Window
 
     private val activity: Activity
-
-    private val targetViewRect = Rect()
-    private val rootGlobalRect = Rect()
-    private val rootGlobalOffset = Point()
-    private val location = IntArray(2)
 
     constructor(fragment: Fragment, targetView: View, tooltipView: View) {
         this.activity = fragment.requireActivity()
@@ -127,65 +117,7 @@ class TooltipBuilder {
         this.window = activity.window
     }
 
-    private fun handleScrollingParent(tooltip: Tooltip) {
-        findNestedScrollParent(targetView)
-            ?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
-                val beforeTargetViewTop = targetViewRect.top
-                dumpTargetViewRect(window.decorView as ViewGroup)
-
-                tooltip.translationY = tooltip.translationY + (targetViewRect.top - beforeTargetViewTop)
-            }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            findScrollParent(targetView)
-                ?.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-                    val beforeTargetViewTop = targetViewRect.top
-                    dumpTargetViewRect(window.decorView as ViewGroup)
-
-                    tooltip.translationY = tooltip.translationY + (targetViewRect.top - beforeTargetViewTop)
-                }
-
-            findHorizontalScrollParent(targetView)
-                ?.setOnScrollChangeListener { _, scrollX, _, oldScrollX, _ ->
-                    val beforeTargetViewLeft = targetViewRect.left
-                    dumpTargetViewRect(window.decorView as ViewGroup)
-
-                    tooltip.translationX = tooltip.translationX + (targetViewRect.left - beforeTargetViewLeft)
-                }
-        }
-    }
-
-    private fun findNestedScrollParent(view: View): NestedScrollView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is NestedScrollView) {
-            view.parent as NestedScrollView
-        } else {
-            findNestedScrollParent(view.parent as View)
-        }
-    }
-
-    private fun findScrollParent(view: View): ScrollView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is ScrollView) {
-            view.parent as ScrollView
-        } else {
-            findScrollParent(view.parent as View)
-        }
-    }
-
-    private fun findHorizontalScrollParent(view: View): HorizontalScrollView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is HorizontalScrollView) {
-            view.parent as HorizontalScrollView
-        } else {
-            findHorizontalScrollParent(view.parent as View)
-        }
-    }
-
-    var themeRes: Int = R.style.Widget_Tooltip
+    var themeRes: Int = R.style.Tooltip
 
     var position: Tooltip.Position = Tooltip.Position.TOP
 
@@ -195,48 +127,13 @@ class TooltipBuilder {
 
     var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
 
-    fun show(): Tooltip {
-        val tooltip = Tooltip(activity, themeRes, tooltipView)
-            .apply {
-                position = this@TooltipBuilder.position
-                onDisplayListener = this@TooltipBuilder.onDisplayListener
-                afterHideListener = this@TooltipBuilder.afterHideListener
-                tooltipAnimation = this@TooltipBuilder.tooltipAnimation
-            }
-
-        if (!tooltip.dimEnabled) {
-            handleScrollingParent(tooltip)
+    fun build(): Tooltip = Tooltip(activity, themeRes, tooltipView, targetView, window)
+        .apply {
+            position = this@TooltipBuilder.position
+            onDisplayListener = this@TooltipBuilder.onDisplayListener
+            afterHideListener = this@TooltipBuilder.afterHideListener
+            tooltipAnimation = this@TooltipBuilder.tooltipAnimation
         }
-
-        val decorView = window.decorView as ViewGroup
-        targetView.postDelayed(
-            {
-                dumpTargetViewRect(decorView)
-
-                tooltip.addToParent(decorView)
-
-                tooltip.doOnPreDraw {
-                    tooltip.show(targetViewRect, decorView.width, decorView.height)
-                }
-            },
-            50L
-        )
-        return tooltip
-    }
-
-    private fun dumpTargetViewRect(decorView: ViewGroup) {
-        targetView.getGlobalVisibleRect(targetViewRect)
-
-        decorView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset)
-
-        targetView.getLocationOnScreen(location)
-
-        targetViewRect.left = location[0]
-        targetViewRect.top -= rootGlobalOffset.y
-        targetViewRect.bottom -= rootGlobalOffset.y
-        targetViewRect.left -= rootGlobalOffset.x
-        targetViewRect.right -= rootGlobalOffset.x
-    }
 
     interface TooltipAnimation {
         fun animateEnter(view: View, animatorListener: Animator.AnimatorListener?)

@@ -4,16 +4,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
+import android.widget.HorizontalScrollView
+import android.widget.ScrollView
 import androidx.annotation.StyleRes
+import androidx.core.widget.NestedScrollView
 import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
@@ -22,7 +22,9 @@ import kotlin.math.roundToInt
 class Tooltip(
     context: Context,
     @StyleRes themeRes: Int,
-    view: View
+    view: View,
+    private val targetView: View,
+    private val window: Window
 ) : FrameLayout(context) {
 
     var arrowWidth: Float = 0f
@@ -110,6 +112,10 @@ class Tooltip(
         }
 
     private val targetViewRect = Rect()
+    private val rootGlobalRect = Rect()
+    private val rootGlobalOffset = Point()
+    private val location = IntArray(2)
+
     private val bubblePath = Path()
     private val bubbleRect = RectF()
 
@@ -147,14 +153,14 @@ class Tooltip(
             }
         }
 
-        val themeRes = if (themeRes == 0) {
-            R.style.Widget_Tooltip
+        val resolvedThemeRes = if (themeRes == 0) {
+            R.style.Tooltip
         } else {
             themeRes
         }
 
         val typedArray = context.obtainStyledAttributes(
-            themeRes,
+            resolvedThemeRes,
             R.styleable.Tooltip
         )
 
@@ -280,7 +286,7 @@ class Tooltip(
         }
     }
 
-    internal fun addToParent(viewGroup: ViewGroup) {
+    private fun addToParent(viewGroup: ViewGroup) {
         if (dimEnabled) {
             viewGroup.addView(
                 dimView,
@@ -295,11 +301,103 @@ class Tooltip(
         )
     }
 
-    fun show(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
+    fun show() {
+        if (!dimEnabled) {
+            handleScrollingParent()
+        }
+
+        val decorView = window.decorView as ViewGroup
+        targetView.postDelayed(
+                {
+                    dumpTargetViewRect(decorView)
+
+                    addToParent(decorView)
+
+                    doOnPreDraw {
+                        show(targetViewRect, decorView.width, decorView.height)
+                    }
+                },
+                50L
+        )
+    }
+
+    private fun dumpTargetViewRect(decorView: ViewGroup) {
+        targetView.getGlobalVisibleRect(targetViewRect)
+
+        decorView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset)
+
+        targetView.getLocationOnScreen(location)
+
+        targetViewRect.left = location[0]
+        targetViewRect.top -= rootGlobalOffset.y
+        targetViewRect.bottom -= rootGlobalOffset.y
+        targetViewRect.left -= rootGlobalOffset.x
+        targetViewRect.right -= rootGlobalOffset.x
+    }
+
+    private fun handleScrollingParent() {
+        findNestedScrollParent(targetView)
+                ?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
+                    val beforeTargetViewTop = targetViewRect.top
+                    dumpTargetViewRect(window.decorView as ViewGroup)
+
+                    translationY += (targetViewRect.top - beforeTargetViewTop)
+                }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            findScrollParent(targetView)
+                    ?.setOnScrollChangeListener { _, _, _, _, _ ->
+                        val beforeTargetViewTop = targetViewRect.top
+                        dumpTargetViewRect(window.decorView as ViewGroup)
+
+                        translationY += (targetViewRect.top - beforeTargetViewTop)
+                    }
+
+            findHorizontalScrollParent(targetView)
+                    ?.setOnScrollChangeListener { _, _, _, _, _ ->
+                        val beforeTargetViewLeft = targetViewRect.left
+                        dumpTargetViewRect(window.decorView as ViewGroup)
+
+                        translationX += (targetViewRect.left - beforeTargetViewLeft)
+                    }
+        }
+    }
+
+    private fun findNestedScrollParent(view: View): NestedScrollView? {
+        return if (view.parent == null || view.parent !is View) {
+            null
+        } else if (view.parent is NestedScrollView) {
+            view.parent as NestedScrollView
+        } else {
+            findNestedScrollParent(view.parent as View)
+        }
+    }
+
+    private fun findScrollParent(view: View): ScrollView? {
+        return if (view.parent == null || view.parent !is View) {
+            null
+        } else if (view.parent is ScrollView) {
+            view.parent as ScrollView
+        } else {
+            findScrollParent(view.parent as View)
+        }
+    }
+
+    private fun findHorizontalScrollParent(view: View): HorizontalScrollView? {
+        return if (view.parent == null || view.parent !is View) {
+            null
+        } else if (view.parent is HorizontalScrollView) {
+            view.parent as HorizontalScrollView
+        } else {
+            findHorizontalScrollParent(view.parent as View)
+        }
+    }
+
+    private fun show(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
         this.targetViewRect.set(targetViewRect)
 
         val adjustedTargetViewRect = Rect(targetViewRect)
-        val changed = adjustSize(adjustedTargetViewRect, screenWidth, screenHeight)
+        val changed = adjustSize(adjustedTargetViewRect, screenWidth)
 
         if (changed) {
             doOnPreDraw {
@@ -310,7 +408,7 @@ class Tooltip(
         }
     }
 
-    private fun adjustSize(targetViewRect: Rect, screenWidth: Int, screenHeight: Int): Boolean {
+    private fun adjustSize(targetViewRect: Rect, screenWidth: Int): Boolean {
         var changed = false
         val layoutParams = layoutParams
 
