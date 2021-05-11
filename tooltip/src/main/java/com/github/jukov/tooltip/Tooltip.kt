@@ -146,6 +146,7 @@ class Tooltip(
         setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint)
         setWithShadow(true)
         addView(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        visibility = View.INVISIBLE
 
         dimView.setOnClickListener {
             if (cancelable) {
@@ -503,6 +504,9 @@ class Tooltip(
         dimView.setTargetViewRect(targetViewRect)
 
         startEnterAnimation()
+
+        visibility = View.VISIBLE
+
         handleAutoRemove()
     }
 

@@ -64,7 +64,7 @@ class TestCaseFragment : Fragment() {
                     Toast.makeText(context, "Closed", Toast.LENGTH_LONG).show()
                 }
             }
-        }
+        }.apply { show() }
     }
 
     override fun onDestroyView() {
