@@ -131,6 +131,7 @@ class TooltipBuilder {
         .apply {
             position = this@TooltipBuilder.position
             onDisplayListener = this@TooltipBuilder.onDisplayListener
+            onHideListener = this@TooltipBuilder.onHideListener
             afterHideListener = this@TooltipBuilder.afterHideListener
             tooltipAnimation = this@TooltipBuilder.tooltipAnimation
         }
