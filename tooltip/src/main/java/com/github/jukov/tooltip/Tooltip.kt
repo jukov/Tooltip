@@ -21,11 +21,11 @@ import kotlin.math.roundToInt
 @SuppressLint("ViewConstructor")
 @Suppress("unused")
 class Tooltip(
-        context: Context,
-        @StyleRes themeRes: Int,
-        view: View,
-        private val targetView: View,
-        private val window: Window
+    context: Context,
+    @StyleRes themeRes: Int,
+    view: View,
+    private val targetView: View,
+    private val window: Window
 ) : FrameLayout(context) {
 
     var arrowWidth: Float = 0f
@@ -178,24 +178,61 @@ class Tooltip(
             R.styleable.Tooltip
         )
 
-        arrowWidth = typedArray.getDimension(R.styleable.Tooltip_arrowWidth, dpToPx(ARROW_WIDTH_DEFAULT_DP, context))
-        arrowHeight = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, dpToPx(ARROW_HEIGHT_DEFAULT_DP, context))
-        arrowSourceMargin = typedArray.getDimension(R.styleable.Tooltip_arrowSourceMargin, dpToPx(ARROW_SOURCE_MARGIN_DEFAULT_DP, context))
-        arrowTargetMargin = typedArray.getDimension(R.styleable.Tooltip_arrowTargetMargin, dpToPx(ARROW_TARGET_MARGIN_DEFAULT_DP, context))
-        cornerRadius = typedArray.getDimension(R.styleable.Tooltip_cornerRadius, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
-        tooltipMargin = typedArray.getDimension(R.styleable.Tooltip_tooltipMargin, dpToPx(TOOLTIP_MARGIN_DEFAULT_DP, context))
-        tooltipPaddingStart = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingStart, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
-        tooltipPaddingTop = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingTop, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
-        tooltipPaddingEnd = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingEnd, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
-        tooltipPaddingBottom = typedArray.getDimension(R.styleable.Tooltip_tooltipPaddingBottom, dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context))
-        bubblePaint.color = typedArray.getColor(R.styleable.Tooltip_backgroundColor, COLOR_BUBBLE_DEFAULT)
+        arrowWidth = typedArray.getDimension(
+            R.styleable.Tooltip_arrowWidth,
+            dpToPx(ARROW_WIDTH_DEFAULT_DP, context)
+        )
+        arrowHeight = typedArray.getDimension(
+            R.styleable.Tooltip_arrowHeight,
+            dpToPx(ARROW_HEIGHT_DEFAULT_DP, context)
+        )
+        arrowSourceMargin = typedArray.getDimension(
+            R.styleable.Tooltip_arrowSourceMargin,
+            dpToPx(ARROW_SOURCE_MARGIN_DEFAULT_DP, context)
+        )
+        arrowTargetMargin = typedArray.getDimension(
+            R.styleable.Tooltip_arrowTargetMargin,
+            dpToPx(ARROW_TARGET_MARGIN_DEFAULT_DP, context)
+        )
+        cornerRadius = typedArray.getDimension(
+            R.styleable.Tooltip_cornerRadius,
+            dpToPx(CORNER_RADIUS_DEFAULT_DP, context)
+        )
+        tooltipMargin = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipMargin,
+            dpToPx(TOOLTIP_MARGIN_DEFAULT_DP, context)
+        )
+        tooltipPaddingStart = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipPaddingStart,
+            dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
+        )
+        tooltipPaddingTop = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipPaddingTop,
+            dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
+        )
+        tooltipPaddingEnd = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipPaddingEnd,
+            dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
+        )
+        tooltipPaddingBottom = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipPaddingBottom,
+            dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
+        )
+        bubblePaint.color =
+            typedArray.getColor(R.styleable.Tooltip_backgroundColor, COLOR_BUBBLE_DEFAULT)
 
         val shadowEnabled = typedArray.getBoolean(R.styleable.Tooltip_shadowEnabled, true)
 
         if (shadowEnabled) {
             shadowColor = typedArray.getColor(R.styleable.Tooltip_shadowColor, COLOR_SHADOW_DEFAULT)
-            shadowPadding = typedArray.getDimension(R.styleable.Tooltip_shadowPadding, dpToPx(SHADOW_PADDING_DEFAULT_DP, context))
-            shadowWidth = typedArray.getDimension(R.styleable.Tooltip_shadowWidth, dpToPx(SHADOW_WIDTH_DEFAULT_DP, context))
+            shadowPadding = typedArray.getDimension(
+                R.styleable.Tooltip_shadowPadding,
+                dpToPx(SHADOW_PADDING_DEFAULT_DP, context)
+            )
+            shadowWidth = typedArray.getDimension(
+                R.styleable.Tooltip_shadowWidth,
+                dpToPx(SHADOW_WIDTH_DEFAULT_DP, context)
+            )
 
             bubblePaint.setShadowLayer(shadowWidth, 0f, 0f, shadowColor)
         }
@@ -203,21 +240,30 @@ class Tooltip(
         borderEnabled = typedArray.getBoolean(R.styleable.Tooltip_borderEnabled, false)
 
         if (borderEnabled) {
-            borderPaint.color = typedArray.getColor(R.styleable.Tooltip_borderColor, Color.TRANSPARENT)
+            borderPaint.color =
+                typedArray.getColor(R.styleable.Tooltip_borderColor, Color.TRANSPARENT)
             borderPaint.strokeWidth = typedArray.getDimension(R.styleable.Tooltip_arrowHeight, 0f)
         }
 
         cancelable = typedArray.getBoolean(R.styleable.Tooltip_cancelable, true)
         clickOutsideToHide = typedArray.getBoolean(R.styleable.Tooltip_clickOutsideToHide, true)
-        clickToHide = typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true) || clickOutsideToHide
+        clickToHide =
+            typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true) || clickOutsideToHide
         autoHide = typedArray.getBoolean(R.styleable.Tooltip_autoHide, false)
-        autoHideAfterMillis = typedArray.getInteger(R.styleable.Tooltip_autoHideAfterMillis, 0).toLong()
+        autoHideAfterMillis =
+            typedArray.getInteger(R.styleable.Tooltip_autoHideAfterMillis, 0).toLong()
 
         dimEnabled = typedArray.getBoolean(R.styleable.Tooltip_dimEnabled, false)
         if (dimEnabled) {
             val dimColor = typedArray.getColor(R.styleable.Tooltip_dimColor, Color.TRANSPARENT)
-            val dimCornerRadius = typedArray.getDimension(R.styleable.Tooltip_dimTargetViewCornerRadius, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
-            val dimPadding = typedArray.getDimension(R.styleable.Tooltip_dimTargetViewPadding, dpToPx(CORNER_RADIUS_DEFAULT_DP, context))
+            val dimCornerRadius = typedArray.getDimension(
+                R.styleable.Tooltip_dimTargetViewCornerRadius,
+                dpToPx(CORNER_RADIUS_DEFAULT_DP, context)
+            )
+            val dimPadding = typedArray.getDimension(
+                R.styleable.Tooltip_dimTargetViewPadding,
+                dpToPx(CORNER_RADIUS_DEFAULT_DP, context)
+            )
 
             dimView.cornerRadius = dimCornerRadius
             dimView.padding = dimPadding
@@ -323,16 +369,16 @@ class Tooltip(
 
         val decorView = window.decorView as ViewGroup
         targetView.postDelayed(
-                {
-                    dumpTargetViewRect(decorView)
+            {
+                dumpTargetViewRect(decorView)
 
-                    addToParent(decorView)
+                addToParent(decorView)
 
-                    doOnPreDraw {
-                        show(targetViewRect, decorView.width, decorView.height)
-                    }
-                },
-                50L
+                doOnPreDraw {
+                    show(targetViewRect, decorView.width, decorView.height)
+                }
+            },
+            50L
         )
     }
 
@@ -352,42 +398,42 @@ class Tooltip(
 
     private fun handleScrollingParent() {
         findNestedScrollParent(targetView)
-                ?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
+            ?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
+                val beforeTargetViewTop = targetViewRect.top
+                dumpTargetViewRect(window.decorView as ViewGroup)
+
+                translationY += (targetViewRect.top - beforeTargetViewTop)
+            }
+
+        findRecyclerViewParent(targetView)
+            ?.apply {
+                recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        this@Tooltip.translationY -= dy
+                    }
+                }
+
+                recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
+                    addOnScrollListener(recyclerViewOnScrollListener)
+                }
+            }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            findScrollParent(targetView)
+                ?.setOnScrollChangeListener { _, _, _, _, _ ->
                     val beforeTargetViewTop = targetViewRect.top
                     dumpTargetViewRect(window.decorView as ViewGroup)
 
                     translationY += (targetViewRect.top - beforeTargetViewTop)
                 }
 
-        findRecyclerViewParent(targetView)
-                ?.apply {
-                    recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
-                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                            this@Tooltip.translationY -= dy
-                        }
-                    }
-
-                    recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
-                        addOnScrollListener(recyclerViewOnScrollListener)
-                    }
-                }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            findScrollParent(targetView)
-                    ?.setOnScrollChangeListener { _, _, _, _, _ ->
-                        val beforeTargetViewTop = targetViewRect.top
-                        dumpTargetViewRect(window.decorView as ViewGroup)
-
-                        translationY += (targetViewRect.top - beforeTargetViewTop)
-                    }
-
             findHorizontalScrollParent(targetView)
-                    ?.setOnScrollChangeListener { _, _, _, _, _ ->
-                        val beforeTargetViewLeft = targetViewRect.left
-                        dumpTargetViewRect(window.decorView as ViewGroup)
+                ?.setOnScrollChangeListener { _, _, _, _, _ ->
+                    val beforeTargetViewLeft = targetViewRect.left
+                    dumpTargetViewRect(window.decorView as ViewGroup)
 
-                        translationX += (targetViewRect.left - beforeTargetViewLeft)
-                    }
+                    translationX += (targetViewRect.left - beforeTargetViewLeft)
+                }
         }
     }
 
@@ -566,19 +612,19 @@ class Tooltip(
 
     private fun removeScrollingParentListeners() {
         findNestedScrollParent(targetView)
-                ?.setOnScrollChangeListener(null as NestedScrollView.OnScrollChangeListener)
+            ?.setOnScrollChangeListener(null as NestedScrollView.OnScrollChangeListener)
 
         recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
             findRecyclerViewParent(targetView)
-                    ?.removeOnScrollListener(recyclerViewOnScrollListener)
+                ?.removeOnScrollListener(recyclerViewOnScrollListener)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             findScrollParent(targetView)
-                    ?.setOnScrollChangeListener(null)
+                ?.setOnScrollChangeListener(null)
 
             findHorizontalScrollParent(targetView)
-                    ?.setOnScrollChangeListener(null)
+                ?.setOnScrollChangeListener(null)
         }
     }
 
@@ -782,8 +828,9 @@ class Tooltip(
                     val xMax = -(screenWidth - width - defaultMargin)
 
                     y = targetViewRect.top - height - tooltipMargin.roundToInt()
-                    x = (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
-                        .coerceIn(xMax, -defaultMargin)
+                    x =
+                        (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
+                            .coerceIn(xMax, -defaultMargin)
                 }
 
                 Position.END -> {
@@ -795,8 +842,9 @@ class Tooltip(
                     val xMax = -(screenWidth - width - defaultMargin)
 
                     y = targetViewRect.bottom + tooltipMargin.roundToInt()
-                    x = (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
-                        .coerceIn(xMax, -defaultMargin)
+                    x =
+                        (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
+                            .coerceIn(xMax, -defaultMargin)
                 }
             }
 
