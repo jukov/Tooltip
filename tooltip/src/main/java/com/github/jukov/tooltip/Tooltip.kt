@@ -14,17 +14,18 @@ import android.widget.HorizontalScrollView
 import android.widget.ScrollView
 import androidx.annotation.StyleRes
 import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
 import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor")
 @Suppress("unused")
 class Tooltip(
-    context: Context,
-    @StyleRes themeRes: Int,
-    view: View,
-    private val targetView: View,
-    private val window: Window
+        context: Context,
+        @StyleRes themeRes: Int,
+        view: View,
+        private val targetView: View,
+        private val window: Window
 ) : FrameLayout(context) {
 
     var arrowWidth: Float = 0f
@@ -66,6 +67,7 @@ class Tooltip(
     private var borderEnabled: Boolean = false
 
     var clickToHide = false
+    var clickOutsideToHide = false
 
     var cancelable = false
 
@@ -141,6 +143,8 @@ class Tooltip(
 
     private val dimView: DimView = DimView(context)
 
+    private var recyclerViewOnScrollListener: RecyclerView.OnScrollListener? = null
+
     init {
         setWillNotDraw(false)
         setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint)
@@ -148,8 +152,17 @@ class Tooltip(
         addView(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         visibility = View.INVISIBLE
 
+        dimView.setOnTouchListener { _, event ->
+            if (targetViewRect.contains(event.x.toInt(), event.y.toInt())) {
+                targetView.dispatchTouchEvent(event)
+                true
+            } else {
+                false
+            }
+        }
+
         dimView.setOnClickListener {
-            if (cancelable) {
+            if (cancelable || clickOutsideToHide) {
                 close()
             }
         }
@@ -195,7 +208,8 @@ class Tooltip(
         }
 
         cancelable = typedArray.getBoolean(R.styleable.Tooltip_cancelable, true)
-        clickToHide = typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true)
+        clickOutsideToHide = typedArray.getBoolean(R.styleable.Tooltip_clickOutsideToHide, true)
+        clickToHide = typedArray.getBoolean(R.styleable.Tooltip_clickToHide, true) || clickOutsideToHide
         autoHide = typedArray.getBoolean(R.styleable.Tooltip_autoHide, false)
         autoHideAfterMillis = typedArray.getInteger(R.styleable.Tooltip_autoHideAfterMillis, 0).toLong()
 
@@ -288,7 +302,7 @@ class Tooltip(
     }
 
     private fun addToParent(viewGroup: ViewGroup) {
-        if (dimEnabled) {
+        if (dimEnabled || clickOutsideToHide) {
             viewGroup.addView(
                 dimView,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -345,6 +359,19 @@ class Tooltip(
                     translationY += (targetViewRect.top - beforeTargetViewTop)
                 }
 
+        findRecyclerViewParent(targetView)
+                ?.apply {
+                    recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            this@Tooltip.translationY -= dy
+                        }
+                    }
+
+                    recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
+                        addOnScrollListener(recyclerViewOnScrollListener)
+                    }
+                }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             findScrollParent(targetView)
                     ?.setOnScrollChangeListener { _, _, _, _, _ ->
@@ -361,6 +388,16 @@ class Tooltip(
 
                         translationX += (targetViewRect.left - beforeTargetViewLeft)
                     }
+        }
+    }
+
+    private fun findRecyclerViewParent(view: View): RecyclerView? {
+        return if (view.parent == null || view.parent !is View) {
+            null
+        } else if (view.parent is RecyclerView) {
+            view.parent as RecyclerView
+        } else {
+            findRecyclerViewParent(view.parent as View)
         }
     }
 
@@ -524,6 +561,25 @@ class Tooltip(
         (parent as? ViewGroup)?.removeView(dimView)
         (parent as? ViewGroup)?.removeView(this)
         afterHideListener?.invoke(this)
+        removeScrollingParentListeners()
+    }
+
+    private fun removeScrollingParentListeners() {
+        findNestedScrollParent(targetView)
+                ?.setOnScrollChangeListener(null as NestedScrollView.OnScrollChangeListener)
+
+        recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
+            findRecyclerViewParent(targetView)
+                    ?.removeOnScrollListener(recyclerViewOnScrollListener)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            findScrollParent(targetView)
+                    ?.setOnScrollChangeListener(null)
+
+            findHorizontalScrollParent(targetView)
+                    ?.setOnScrollChangeListener(null)
+        }
     }
 
     private interface PositioningDelegate {

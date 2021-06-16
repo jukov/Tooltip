@@ -28,6 +28,7 @@
 
         <attr name="cancelable" format="boolean" />
         <attr name="clickToHide" format="boolean" />
+        <attr name="clickOutsideToHide" format="boolean" />
         <attr name="autoHide" format="boolean" />
         <attr name="autoHideAfterMillis" format="integer" />
 
