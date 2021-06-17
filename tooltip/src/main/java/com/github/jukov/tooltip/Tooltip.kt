@@ -375,7 +375,7 @@ class Tooltip(
                 addToParent(decorView)
 
                 doOnPreDraw {
-                    show(targetViewRect, decorView.width, decorView.height)
+                    show(decorView.width)
                 }
             },
             50L
@@ -477,9 +477,7 @@ class Tooltip(
         }
     }
 
-    private fun show(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
-        this.targetViewRect.set(targetViewRect)
-
+    private fun show(screenWidth: Int) {
         val adjustedTargetViewRect = Rect(targetViewRect)
         val changed = adjustSize(adjustedTargetViewRect, screenWidth)
 
@@ -584,7 +582,7 @@ class Tooltip(
         )
         positioningDelegate.updateBubblePath()
 
-        dimView.setTargetViewRect(targetViewRect)
+        dimView.setTargetViewRect(this.targetViewRect)
 
         startEnterAnimation()
 
