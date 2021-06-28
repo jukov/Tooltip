@@ -15,22 +15,25 @@ import androidx.fragment.app.Fragment
 fun makeTooltip(
     fragment: Fragment,
     targetView: View,
+    touchTargetView: View = targetView,
     tooltipLayout: View,
     configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
-    TooltipBuilder(fragment, targetView, tooltipLayout)
+    TooltipBuilder(fragment, targetView, touchTargetView, tooltipLayout)
         .apply { configurator() }
         .build()
 
 fun makeTooltip(
     fragment: Fragment,
     targetView: View,
+    touchTargetView: View = targetView,
     @LayoutRes tooltipLayoutRes: Int,
     configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         fragment,
         targetView,
+        touchTargetView,
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
@@ -39,12 +42,14 @@ fun makeTooltip(
 fun makeTooltip(
     fragment: Fragment,
     @IdRes targetViewRes: Int,
+    @IdRes touchTargetViewRes: Int = targetViewRes,
     @LayoutRes tooltipLayoutRes: Int,
     configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         fragment,
         fragment.requireView().findViewById(targetViewRes),
+        fragment.requireView().findViewById(touchTargetViewRes),
         LayoutInflater.from(fragment.requireContext()).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
@@ -53,12 +58,14 @@ fun makeTooltip(
 fun makeTooltip(
     activity: Activity,
     targetView: View,
+    touchTargetView: View = targetView,
     tooltipLayout: View,
     configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         activity,
         targetView,
+        touchTargetView,
         tooltipLayout
     )
         .apply { configurator() }
@@ -67,12 +74,14 @@ fun makeTooltip(
 fun makeTooltip(
     activity: Activity,
     targetView: View,
+    touchTargetView: View = targetView,
     @LayoutRes tooltipLayoutRes: Int,
     configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         activity,
         targetView,
+        touchTargetView,
         LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
@@ -81,12 +90,14 @@ fun makeTooltip(
 fun makeTooltip(
     activity: Activity,
     @IdRes targetViewRes: Int,
+    @IdRes touchTargetViewRes: Int = targetViewRes,
     @LayoutRes tooltipLayoutRes: Int,
     configurator: TooltipBuilder.() -> Unit = {},
 ): Tooltip =
     TooltipBuilder(
         activity,
         activity.findViewById(targetViewRes),
+        activity.findViewById(touchTargetViewRes),
         LayoutInflater.from(activity).inflate(tooltipLayoutRes, null)
     )
         .apply { configurator() }
@@ -96,23 +107,31 @@ fun makeTooltip(
 class TooltipBuilder {
 
     private val targetView: View
+    private val touchTargetView: View
     private val tooltipView: View
 
     private val window: Window
 
     private val activity: Activity
 
-    constructor(fragment: Fragment, targetView: View, tooltipView: View) {
+    constructor(
+        fragment: Fragment,
+        targetView: View,
+        touchTargetView: View,
+        tooltipView: View
+    ) {
         this.activity = fragment.requireActivity()
         this.targetView = targetView
+        this.touchTargetView = touchTargetView
         this.tooltipView = tooltipView
         this.window =
             (fragment as? DialogFragment)?.dialog?.window ?: fragment.requireActivity().window
     }
 
-    constructor(activity: Activity, targetView: View, tooltipView: View) {
+    constructor(activity: Activity, targetView: View, tooltipView: View, touchTargetView: View) {
         this.activity = activity
         this.targetView = targetView
+        this.touchTargetView = touchTargetView
         this.tooltipView = tooltipView
         this.window = activity.window
     }
@@ -127,7 +146,7 @@ class TooltipBuilder {
 
     var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
 
-    fun build(): Tooltip = Tooltip(activity, themeRes, tooltipView, targetView, window)
+    fun build(): Tooltip = Tooltip(activity, themeRes, tooltipView, targetView, touchTargetView, window)
         .apply {
             position = this@TooltipBuilder.position
             onDisplayListener = this@TooltipBuilder.onDisplayListener

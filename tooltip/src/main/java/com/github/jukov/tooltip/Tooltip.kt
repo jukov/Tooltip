@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.os.Build
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -18,13 +19,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
-@SuppressLint("ViewConstructor")
+@SuppressLint("ViewConstructor", "ClickableViewAccessibility")
 @Suppress("unused")
 class Tooltip(
     context: Context,
     @StyleRes themeRes: Int,
     view: View,
     private val targetView: View,
+    private val touchTargetView: View = targetView,
     private val window: Window
 ) : FrameLayout(context) {
 
@@ -114,6 +116,7 @@ class Tooltip(
         }
 
     private val targetViewRect = Rect()
+    private val touchTargetViewRect = Rect()
     private val rootGlobalRect = Rect()
     private val rootGlobalOffset = Point()
     private val location = IntArray(2)
@@ -154,7 +157,15 @@ class Tooltip(
 
         dimView.setOnTouchListener { _, event ->
             if (targetViewRect.contains(event.x.toInt(), event.y.toInt())) {
-                targetView.dispatchTouchEvent(event)
+                touchTargetView.getGlobalVisibleRect(touchTargetViewRect)
+
+                val patchedEvent = MotionEvent.obtain(event)
+                patchedEvent.offsetLocation(
+                    -touchTargetViewRect.left.toFloat(),
+                    -touchTargetViewRect.top.toFloat()
+                )
+                touchTargetView.dispatchTouchEvent(patchedEvent)
+                patchedEvent.recycle()
                 true
             } else {
                 false
