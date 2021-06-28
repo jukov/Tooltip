@@ -6,6 +6,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -123,6 +125,8 @@ class Tooltip(
 
     private val bubblePath = Path()
     private val bubbleRect = RectF()
+
+    private val removingHandler = Handler(Looper.getMainLooper())
 
     private val bubblePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
         .apply {
@@ -354,7 +358,7 @@ class Tooltip(
             }
         }
         if (autoHide) {
-            postDelayed({ this.close() }, autoHideAfterMillis)
+            removingHandler.postDelayed({ this.close() }, autoHideAfterMillis)
         }
     }
 
@@ -617,6 +621,7 @@ class Tooltip(
         (parent as? ViewGroup)?.removeView(this)
         afterHideListener?.invoke(this)
         removeScrollingParentListeners()
+        removingHandler.removeCallbacksAndMessages(null)
     }
 
     private fun removeScrollingParentListeners() {
