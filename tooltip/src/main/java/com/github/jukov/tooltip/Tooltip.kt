@@ -121,7 +121,6 @@ class Tooltip(
     private val touchTargetViewRect = Rect()
     private val rootGlobalRect = Rect()
     private val rootGlobalOffset = Point()
-    private val location = IntArray(2)
 
     private val bubblePath = Path()
     private val bubbleRect = RectF()
@@ -402,9 +401,6 @@ class Tooltip(
 
         decorView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset)
 
-        targetView.getLocationOnScreen(location)
-
-        targetViewRect.left = location[0]
         targetViewRect.top -= rootGlobalOffset.y
         targetViewRect.bottom -= rootGlobalOffset.y
         targetViewRect.left -= rootGlobalOffset.x
