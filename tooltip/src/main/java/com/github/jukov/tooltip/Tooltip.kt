@@ -153,7 +153,6 @@ class Tooltip(
 
     init {
         setWillNotDraw(false)
-        setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint)
         setWithShadow(true)
         addView(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         visibility = View.INVISIBLE
@@ -622,7 +621,7 @@ class Tooltip(
 
     private fun removeScrollingParentListeners() {
         findNestedScrollParent(targetView)
-            ?.setOnScrollChangeListener(null as NestedScrollView.OnScrollChangeListener)
+            ?.setOnScrollChangeListener(null as NestedScrollView.OnScrollChangeListener?)
 
         recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
             findRecyclerViewParent(targetView)
