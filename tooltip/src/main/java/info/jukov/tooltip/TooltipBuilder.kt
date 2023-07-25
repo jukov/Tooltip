@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package com.github.jukov.tooltip
+package info.jukov.tooltip
 
 import android.animation.Animator
 import android.app.Activity

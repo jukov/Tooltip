@@ -1,4 +1,4 @@
-package com.github.jukov.tooltip.sample
+package info.jukov.tooltip.sample
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import info.jukov.tooltip_sample.R
 
 class TestCasesActivity : AppCompatActivity() {
 
@@ -73,24 +74,25 @@ class TestCasesActivity : AppCompatActivity() {
                 invalidateToolbar()
                 true
             }
+
             else -> {
                 false
             }
         }
 
     private fun showTest() {
-            (supportFragmentManager
-                .findFragmentByTag(CONFIGURE_FRAGMENT_TAG) as? TestCaseConfigureFragment)
-                ?.makeConfig()
-                ?.let { config -> TestCaseFragment.newInstanse(config) }
-                ?.let { fragmenr ->
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(android.R.id.content, fragmenr)
-                        .addToBackStack(null)
-                        .commit()
-                }
-                ?.also { mode = Mode.DISPLAY }
+        (supportFragmentManager
+            .findFragmentByTag(CONFIGURE_FRAGMENT_TAG) as? TestCaseConfigureFragment)
+            ?.makeConfig()
+            ?.let { config -> TestCaseFragment.newInstanse(config) }
+            ?.let { fragmenr ->
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(android.R.id.content, fragmenr)
+                    .addToBackStack(null)
+                    .commit()
+            }
+            ?.also { mode = Mode.DISPLAY }
     }
 
     private enum class Mode {

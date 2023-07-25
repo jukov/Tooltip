@@ -1,13 +1,15 @@
-package com.github.jukov.tooltip.sample
+package info.jukov.tooltip.sample
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.BundleCompat
 import androidx.fragment.app.Fragment
-import com.github.jukov.tooltip.Tooltip
-import com.github.jukov.tooltip.makeTooltip
+import info.jukov.tooltip.Tooltip
+import info.jukov.tooltip.makeTooltip
+import info.jukov.tooltip_sample.R
 
 class TestCaseFragment : Fragment() {
 

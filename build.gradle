@@ -1,5 +1,11 @@
 buildscript {
-    ext.kotlin_version = '1.6.0'
+    ext.versions = [
+            sdkMin : 17,
+            sdkTarget : 33,
+            gradlePlugin : '8.0.2',
+            kotlin : '1.8.22',
+            support : '27.0.2'
+    ]
 
     repositories {
         google()
@@ -7,25 +13,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath "com.android.tools.build:gradle:$versions.gradlePlugin"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
-}
-
-ext{
-    targetSdk = 33
-    minSdk = 19
-    sourceCompatibilityVersion = JavaVersion.VERSION_1_8
-    targetCompatibilityVersion = JavaVersion.VERSION_1_8
-
-    libraryVersion = "1.2.2"
 }

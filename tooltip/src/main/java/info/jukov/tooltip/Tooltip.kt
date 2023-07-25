@@ -1,4 +1,4 @@
-package com.github.jukov.tooltip
+package info.jukov.tooltip
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -18,7 +18,7 @@ import android.widget.ScrollView
 import androidx.annotation.StyleRes
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.jukov.tooltip.TooltipBuilder.TooltipAnimation
+import info.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor", "ClickableViewAccessibility")
@@ -74,6 +74,9 @@ class Tooltip(
     var clickOutsideToHide = false
 
     var cancelable = false
+
+    var isClosed = false
+        private set
 
     internal var autoHide = false
     internal var autoHideAfterMillis: Long = 0
@@ -617,6 +620,7 @@ class Tooltip(
         afterHideListener?.invoke(this)
         removeScrollingParentListeners()
         removingHandler.removeCallbacksAndMessages(null)
+        isClosed = true
     }
 
     private fun removeScrollingParentListeners() {

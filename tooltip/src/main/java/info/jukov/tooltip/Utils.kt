@@ -1,4 +1,4 @@
-package com.github.jukov.tooltip
+package info.jukov.tooltip
 
 import android.content.Context
 import android.util.DisplayMetrics
