@@ -4,7 +4,13 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Point
+import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -20,12 +26,12 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.roundToInt
 
-@SuppressLint("ViewConstructor", "ClickableViewAccessibility")
-@Suppress("unused")
+@SuppressLint("ClickableViewAccessibility", "ViewConstructor")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class Tooltip(
     context: Context,
     @StyleRes themeRes: Int,
-    view: View,
+    tooltipView: View,
     private val targetView: View,
     private val touchTargetView: View = targetView,
     private val window: Window
@@ -156,7 +162,7 @@ class Tooltip(
     init {
         setWillNotDraw(false)
         setWithShadow(true)
-        addView(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        addView(tooltipView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         visibility = View.INVISIBLE
 
         dimView.setOnTouchListener { _, event ->
@@ -409,7 +415,7 @@ class Tooltip(
     }
 
     private fun handleScrollingParent() {
-        findNestedScrollParent(targetView)
+        targetView.findParent<NestedScrollView>()
             ?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
                 val beforeTargetViewTop = targetViewRect.top
                 dumpTargetViewRect(window.decorView as ViewGroup)
@@ -417,7 +423,7 @@ class Tooltip(
                 translationY += (targetViewRect.top - beforeTargetViewTop)
             }
 
-        findRecyclerViewParent(targetView)
+        targetView.findParent<RecyclerView>()
             ?.apply {
                 recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -431,7 +437,7 @@ class Tooltip(
             }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            findScrollParent(targetView)
+            targetView.findParent<ScrollView>()
                 ?.setOnScrollChangeListener { _, _, _, _, _ ->
                     val beforeTargetViewTop = targetViewRect.top
                     dumpTargetViewRect(window.decorView as ViewGroup)
@@ -439,53 +445,13 @@ class Tooltip(
                     translationY += (targetViewRect.top - beforeTargetViewTop)
                 }
 
-            findHorizontalScrollParent(targetView)
+            targetView.findParent<HorizontalScrollView>()
                 ?.setOnScrollChangeListener { _, _, _, _, _ ->
                     val beforeTargetViewLeft = targetViewRect.left
                     dumpTargetViewRect(window.decorView as ViewGroup)
 
                     translationX += (targetViewRect.left - beforeTargetViewLeft)
                 }
-        }
-    }
-
-    private fun findRecyclerViewParent(view: View): RecyclerView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is RecyclerView) {
-            view.parent as RecyclerView
-        } else {
-            findRecyclerViewParent(view.parent as View)
-        }
-    }
-
-    private fun findNestedScrollParent(view: View): NestedScrollView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is NestedScrollView) {
-            view.parent as NestedScrollView
-        } else {
-            findNestedScrollParent(view.parent as View)
-        }
-    }
-
-    private fun findScrollParent(view: View): ScrollView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is ScrollView) {
-            view.parent as ScrollView
-        } else {
-            findScrollParent(view.parent as View)
-        }
-    }
-
-    private fun findHorizontalScrollParent(view: View): HorizontalScrollView? {
-        return if (view.parent == null || view.parent !is View) {
-            null
-        } else if (view.parent is HorizontalScrollView) {
-            view.parent as HorizontalScrollView
-        } else {
-            findHorizontalScrollParent(view.parent as View)
         }
     }
 
@@ -623,19 +589,19 @@ class Tooltip(
     }
 
     private fun removeScrollingParentListeners() {
-        findNestedScrollParent(targetView)
+        targetView.findParent<NestedScrollView>()
             ?.setOnScrollChangeListener(null as NestedScrollView.OnScrollChangeListener?)
 
         recyclerViewOnScrollListener?.let { recyclerViewOnScrollListener ->
-            findRecyclerViewParent(targetView)
+            targetView.findParent<RecyclerView>()
                 ?.removeOnScrollListener(recyclerViewOnScrollListener)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            findScrollParent(targetView)
+            targetView.findParent<ScrollView>()
                 ?.setOnScrollChangeListener(null)
 
-            findHorizontalScrollParent(targetView)
+            targetView.findParent<HorizontalScrollView>()
                 ?.setOnScrollChangeListener(null)
         }
     }
