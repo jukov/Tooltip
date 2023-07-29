@@ -5,10 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.BundleCompat
 import androidx.fragment.app.Fragment
 import info.jukov.tooltip.Tooltip
-import info.jukov.tooltip.makeTooltip
+import info.jukov.tooltip.TooltipBuilder
 import info.jukov.tooltip_sample.R
 
 class TestCaseFragment : Fragment() {
@@ -52,21 +51,21 @@ class TestCaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         targetView = view.findViewById<View>(R.id.button_target)
 
-        tooltip = makeTooltip(
+        tooltip = TooltipBuilder(
             fragment = this,
             targetView = targetView,
             tooltipLayoutRes = when (tooltipConfig.viewType) {
                 ViewType.LARGE_TEXT -> R.layout.tooltip_text_long
                 ViewType.SMALL -> R.layout.tooltip_icon
             },
-        ) {
-            position = tooltipConfig.position
-            onHideListener = {
+        )
+            .setPosition(tooltipConfig.position)
+            .setOnDisplayListener {
                 context?.let { context ->
                     Toast.makeText(context, "Closed", Toast.LENGTH_LONG).show()
                 }
             }
-        }.apply { show() }
+            .show()
     }
 
     override fun onDestroyView() {

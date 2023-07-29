@@ -3,7 +3,8 @@ package info.jukov.tooltip
 import android.animation.Animator
 import android.view.View
 
-class FadeTooltipAnimation : TooltipBuilder.TooltipAnimation {
+@Suppress("unused")
+class FadeTooltipAnimation : TooltipAnimation {//TODO interpolator?
 
     private var fadeDuration: Long = 400
 

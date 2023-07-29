@@ -18,7 +18,6 @@ import android.widget.ScrollView
 import androidx.annotation.StyleRes
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import info.jukov.tooltip.TooltipBuilder.TooltipAnimation
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor", "ClickableViewAccessibility")
