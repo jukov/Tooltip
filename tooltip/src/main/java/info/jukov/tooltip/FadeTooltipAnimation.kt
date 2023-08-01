@@ -2,7 +2,7 @@ package info.jukov.tooltip
 
 import android.animation.Animator
 import android.view.View
-
+//TODO provide text without providing view
 @Suppress("unused")
 class FadeTooltipAnimation : TooltipAnimation {//TODO interpolator?
 

@@ -9,7 +9,8 @@
 
         <attr name="cornerRadius" format="dimension" />
 
-        <attr name="tooltipMargin" format="dimension" />
+        <attr name="tooltipTargetViewMargin" format="dimension" />
+        <attr name="tooltipViewPortMargin" format="dimension" />
         <attr name="tooltipPaddingStart" format="dimension" />
         <attr name="tooltipPaddingTop" format="dimension" />
         <attr name="tooltipPaddingEnd" format="dimension" />
@@ -38,6 +39,7 @@
         <attr name="dimTargetViewPadding" format="dimension" />
     </declare-styleable>
 
+    <!--TODO use system parameters-->
     <style name="Tooltip">
         <item name="arrowWidth">16dp</item>
         <item name="arrowHeight">8dp</item>
@@ -46,7 +48,8 @@
         <item name="cornerRadius">8dp</item>
         <item name="shadowPadding">2dp</item>
         <item name="shadowWidth">4dp</item>
-        <item name="tooltipMargin">0dp</item>
+        <item name="tooltipTargetViewMargin">2dp</item>
+        <item name="tooltipViewPortMargin">8dp</item>
         <item name="tooltipPaddingStart">8dp</item>
         <item name="tooltipPaddingTop">8dp</item>
         <item name="tooltipPaddingEnd">8dp</item>

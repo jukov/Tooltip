@@ -48,7 +48,9 @@ class Tooltip(
     var shadowPadding: Float = 0f
     var shadowWidth: Float = 0f
 
-    var tooltipMargin: Float = 0f
+    //TODO remove tooltip from names
+    var tooltipTargetViewMargin: Int = 0
+    var tooltipViewPortMargin: Int = 0
 
     var tooltipPaddingStart: Float = 0f
     var tooltipPaddingTop: Float = 0f
@@ -103,18 +105,21 @@ class Tooltip(
                     tooltipPaddingEnd.roundToInt(),
                     tooltipPaddingBottom.roundToInt() + arrowHeight.roundToInt()
                 )
+
                 Position.BOTTOM -> setPaddingRelative(
                     tooltipPaddingStart.roundToInt(),
                     tooltipPaddingTop.roundToInt() + arrowHeight.roundToInt(),
                     tooltipPaddingEnd.roundToInt(),
                     tooltipPaddingBottom.roundToInt()
                 )
+
                 Position.START -> setPaddingRelative(
                     tooltipPaddingStart.roundToInt(),
                     tooltipPaddingTop.roundToInt(),
                     tooltipPaddingEnd.roundToInt() + arrowHeight.roundToInt(),
                     tooltipPaddingBottom.roundToInt()
                 )
+
                 Position.END -> setPaddingRelative(
                     tooltipPaddingStart.roundToInt() + arrowHeight.roundToInt(),
                     tooltipPaddingTop.roundToInt(),
@@ -162,7 +167,11 @@ class Tooltip(
     init {
         setWillNotDraw(false)
         setWithShadow(true)
-        addView(tooltipView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        addView(
+            tooltipView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         visibility = View.INVISIBLE
 
         dimView.setOnTouchListener { _, event ->
@@ -219,10 +228,14 @@ class Tooltip(
             R.styleable.Tooltip_cornerRadius,
             dpToPx(CORNER_RADIUS_DEFAULT_DP, context)
         )
-        tooltipMargin = typedArray.getDimension(
-            R.styleable.Tooltip_tooltipMargin,
-            dpToPx(TOOLTIP_MARGIN_DEFAULT_DP, context)
-        )
+        tooltipTargetViewMargin = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipTargetViewMargin,
+            dpToPx(TOOLTIP_TARGET_VIEW_MARGIN_DEFAULT_DP, context)
+        ).roundToInt()
+        tooltipViewPortMargin = typedArray.getDimension(
+            R.styleable.Tooltip_tooltipViewPortMargin,
+            dpToPx(TOOLTIP_VIEW_PORT_MARGIN_DEFAULT_DP, context)
+        ).roundToInt()
         tooltipPaddingStart = typedArray.getDimension(
             R.styleable.Tooltip_tooltipPaddingStart,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
@@ -396,7 +409,7 @@ class Tooltip(
                 addToParent(decorView)
 
                 doOnPreDraw {
-                    show(decorView.width)
+                    show(decorView.width, decorView.height)
                 }
             },
             50L
@@ -455,102 +468,21 @@ class Tooltip(
         }
     }
 
-    private fun show(screenWidth: Int) {
+    private fun show(screenWidth: Int, screenHeight: Int) {
         val adjustedTargetViewRect = Rect(targetViewRect)
-        val changed = adjustSize(adjustedTargetViewRect, screenWidth)
+        val changed = positioningDelegate.adjustSize(adjustedTargetViewRect, screenWidth)
 
         if (changed) {
             doOnPreDraw {
-                setup(adjustedTargetViewRect, screenWidth)
+                setup(adjustedTargetViewRect, screenWidth, screenHeight)
             }
         } else {
-            setup(adjustedTargetViewRect, screenWidth)
+            setup(adjustedTargetViewRect, screenWidth, screenHeight)
         }
     }
 
-    private fun adjustSize(targetViewRect: Rect, screenWidth: Int): Boolean {
-        var changed = false
-        val layoutParams = layoutParams
-
-        val defaultMargin = dpToPx(MARGIN_SCREEN_BORDER_TOOLTIP_DP, context)
-
-        when (position) {
-            Position.START -> {
-                if (width > targetViewRect.left) {
-                    layoutParams.width =
-                        targetViewRect.left - defaultMargin.roundToInt() - tooltipMargin.roundToInt()
-                    changed = true
-                }
-            }
-
-            Position.END -> {
-                if (targetViewRect.right + width > screenWidth) {
-                    layoutParams.width =
-                        screenWidth - targetViewRect.right - defaultMargin.roundToInt() - tooltipMargin.roundToInt()
-                    changed = true
-                }
-            }
-
-            Position.TOP, Position.BOTTOM -> {
-                val tooltipWidth: Int
-
-                if (width + defaultMargin * 2 >= screenWidth) {
-                    layoutParams.width = screenWidth - (defaultMargin * 2).roundToInt()
-                    tooltipWidth = layoutParams.width
-                    changed = true
-                } else {
-                    tooltipWidth = width
-                }
-
-                var adjustedLeft = targetViewRect.left
-                var adjustedRight = targetViewRect.right
-
-                if (targetViewRect.centerX() + tooltipWidth / 2f > screenWidth) {
-                    val diff = targetViewRect.centerX() + tooltipWidth / 2f - screenWidth
-                    adjustedLeft -= diff.toInt()
-                    adjustedRight -= diff.toInt()
-                    changed = true
-
-                } else if (targetViewRect.centerX() - tooltipWidth / 2f < 0) {
-                    val diff = -(targetViewRect.centerX() - tooltipWidth / 2f)
-                    adjustedLeft += diff.toInt()
-                    adjustedRight += diff.toInt()
-                    changed = true
-                }
-
-                if (adjustedLeft < 0) {
-                    adjustedLeft = 0
-                }
-
-                if (adjustedRight > screenWidth) {
-                    adjustedRight = screenWidth
-                }
-
-                targetViewRect.left = adjustedLeft
-                targetViewRect.right = adjustedRight
-            }
-        }
-
-        if (position.isHorizontal() && arrowWidth + cornerRadius * 2 > targetViewRect.height()) {
-            targetViewRect.top -= (arrowWidth / 2 + cornerRadius).toInt()
-            targetViewRect.bottom += (arrowWidth / 2 + cornerRadius).toInt()
-            changed = true
-        }
-
-        if (position.isVertical() && arrowWidth + cornerRadius * 2 > targetViewRect.width()) {
-            targetViewRect.left -= (arrowWidth / 2 + cornerRadius).toInt()
-            targetViewRect.right += (arrowWidth / 2 + cornerRadius).toInt()
-            changed = true
-        }
-
-        setLayoutParams(layoutParams)
-        postInvalidate()
-
-        return changed
-    }
-
-    private fun setup(targetViewRect: Rect, screenWidth: Int) {
-        positioningDelegate.setupPosition(targetViewRect, screenWidth)
+    private fun setup(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
+        positioningDelegate.setupPosition(targetViewRect, screenWidth, screenHeight)
 
         bubbleRect.set(
             shadowPadding,
@@ -606,14 +538,89 @@ class Tooltip(
         }
     }
 
-    private interface PositioningDelegate {
+    private abstract inner class PositioningDelegate {
 
-        fun updateBubblePath()
+        abstract fun updateBubblePath()
 
-        fun setupPosition(targetViewRect: Rect, screenWidth: Int)
+        abstract fun setupPosition(targetViewRect: Rect, screenWidth: Int, screenHeight: Int)
+
+        abstract fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean
+
+        abstract fun adjustSizeEnd(targetViewRect: Rect, screenWidth: Int): Boolean
+
+        fun adjustSize(targetViewRect: Rect, screenWidth: Int): Boolean {
+            var changed = false
+            val layoutParams = layoutParams
+
+            when (position) {
+                Position.END -> {
+                    changed = adjustSizeEnd(targetViewRect, screenWidth)
+                }
+
+                Position.START -> {
+                    changed = adjustSizeStart(targetViewRect, screenWidth)
+                }
+
+                Position.TOP, Position.BOTTOM -> {
+                    val tooltipWidth: Int
+
+                    if (width + tooltipViewPortMargin * 2 >= screenWidth) {
+                        layoutParams.width = screenWidth - (tooltipViewPortMargin * 2)
+                        tooltipWidth = layoutParams.width
+                        changed = true
+                    } else {
+                        tooltipWidth = width
+                    }
+
+                    var adjustedLeft = targetViewRect.left
+                    var adjustedRight = targetViewRect.right
+
+                    if (targetViewRect.centerX() + tooltipWidth / 2f > screenWidth) {
+                        val diff = targetViewRect.centerX() + tooltipWidth / 2f - screenWidth
+                        adjustedLeft -= diff.toInt()
+                        adjustedRight -= diff.toInt()
+                        changed = true
+
+                    } else if (targetViewRect.centerX() - tooltipWidth / 2f < 0) {
+                        val diff = -(targetViewRect.centerX() - tooltipWidth / 2f)
+                        adjustedLeft += diff.toInt()
+                        adjustedRight += diff.toInt()
+                        changed = true
+                    }
+
+                    if (adjustedLeft < 0) {
+                        adjustedLeft = 0
+                    }
+
+                    if (adjustedRight > screenWidth) {
+                        adjustedRight = screenWidth
+                    }
+
+                    targetViewRect.left = adjustedLeft
+                    targetViewRect.right = adjustedRight
+                }
+            }
+
+            if (position.isHorizontal() && arrowWidth + cornerRadius * 2 > targetViewRect.height()) {
+                targetViewRect.top -= (arrowWidth / 2 + cornerRadius).toInt()
+                targetViewRect.bottom += (arrowWidth / 2 + cornerRadius).toInt()
+                changed = true
+            }
+
+            if (position.isVertical() && arrowWidth + cornerRadius * 2 > targetViewRect.width()) {
+                targetViewRect.left -= (arrowWidth / 2 + cornerRadius).toInt()
+                targetViewRect.right += (arrowWidth / 2 + cornerRadius).toInt()
+                changed = true
+            }
+
+            setLayoutParams(layoutParams)
+            postInvalidate()
+
+            return changed
+        }
     }
 
-    private inner class LtrPositioningDelegate : PositioningDelegate {
+    private inner class LtrPositioningDelegate : PositioningDelegate() {
 
         override fun updateBubblePath() {
             bubblePath.reset()
@@ -682,46 +689,64 @@ class Tooltip(
             bubblePath.close()
         }
 
-        override fun setupPosition(targetViewRect: Rect, screenWidth: Int) {
+        override fun setupPosition(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
             val x: Int
             val y: Int
 
-            val defaultMargin = dpToPx(MARGIN_SCREEN_BORDER_TOOLTIP_DP, context).toInt()
-
             when (position) {
                 Position.START -> {
-                    x = targetViewRect.left - width - tooltipMargin.roundToInt()
-                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
+                    x = targetViewRect.left - width - tooltipTargetViewMargin
+                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
                 }
 
                 Position.TOP -> {
-                    val xMax = screenWidth - width - defaultMargin
+                    val xMax = screenWidth - width - tooltipViewPortMargin
 
-                    y = targetViewRect.top - height - tooltipMargin.roundToInt()
+                    y = targetViewRect.top - height - tooltipTargetViewMargin
                     x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
-                        .coerceIn(defaultMargin..xMax)
+                        .coerceIn(tooltipViewPortMargin, xMax)
                 }
 
                 Position.END -> {
-                    x = targetViewRect.right + tooltipMargin.roundToInt()
-                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
+                    x = targetViewRect.right + tooltipTargetViewMargin
+                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
                 }
 
                 Position.BOTTOM -> {
-                    val xMax = screenWidth - width - defaultMargin
+                    val xMax = screenWidth - width - tooltipViewPortMargin
 
-                    y = targetViewRect.bottom + tooltipMargin.roundToInt()
+                    y = targetViewRect.bottom + tooltipTargetViewMargin
                     x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
-                        .coerceIn(defaultMargin..xMax)
+                        .coerceIn(tooltipViewPortMargin, xMax)
                 }
             }
 
             translationX = x.toFloat()
             translationY = y.toFloat()
         }
+
+        override fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean {
+            if (width > targetViewRect.left) {
+                layoutParams.width = targetViewRect.left - tooltipViewPortMargin -
+                        tooltipTargetViewMargin
+                return true
+            }
+            return false
+        }
+
+        override fun adjustSizeEnd(targetViewRect: Rect, screenWidth: Int): Boolean {
+            if (targetViewRect.right + width > screenWidth) {
+                layoutParams.width = screenWidth - targetViewRect.right -
+                        tooltipViewPortMargin - tooltipTargetViewMargin
+                return true
+            }
+            return false
+        }
     }
 
-    private inner class RtlPositioningDelegate : PositioningDelegate {
+    private inner class RtlPositioningDelegate : PositioningDelegate() {
 
         override fun updateBubblePath() {
             bubblePath.reset()
@@ -790,44 +815,62 @@ class Tooltip(
             bubblePath.close()
         }
 
-        override fun setupPosition(targetViewRect: Rect, screenWidth: Int) {
+        override fun setupPosition(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
             val x: Int
             val y: Int
 
-            val defaultMargin = dpToPx(MARGIN_SCREEN_BORDER_TOOLTIP_DP, context).toInt()
-
             when (position) {
                 Position.START -> {
-                    x = -(screenWidth - targetViewRect.right - width) + tooltipMargin.roundToInt()
-                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
+                    x = -(screenWidth - targetViewRect.right - width) + tooltipTargetViewMargin
+                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
                 }
 
                 Position.TOP -> {
-                    val xMax = -(screenWidth - width - defaultMargin)
+                    val xMax = -(screenWidth - width - tooltipViewPortMargin)
 
-                    y = targetViewRect.top - height - tooltipMargin.roundToInt()
+                    y = targetViewRect.top - height - tooltipTargetViewMargin
                     x =
                         (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
-                            .coerceIn(xMax, -defaultMargin)
+                            .coerceIn(xMax, -tooltipViewPortMargin)
                 }
 
                 Position.END -> {
-                    x = -(screenWidth - targetViewRect.left) - tooltipMargin.roundToInt()
-                    y = targetViewRect.top + (targetViewRect.height() - height) / 2
+                    x = -(screenWidth - targetViewRect.left) - tooltipTargetViewMargin
+                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
                 }
 
                 Position.BOTTOM -> {
-                    val xMax = -(screenWidth - width - defaultMargin)
+                    val xMax = -(screenWidth - width - tooltipViewPortMargin)
 
-                    y = targetViewRect.bottom + tooltipMargin.roundToInt()
+                    y = targetViewRect.bottom + tooltipTargetViewMargin
                     x =
                         (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
-                            .coerceIn(xMax, -defaultMargin)
+                            .coerceIn(xMax, -tooltipViewPortMargin)
                 }
             }
 
             translationX = x.toFloat()
             translationY = y.toFloat()
+        }
+
+        override fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean {
+            if (targetViewRect.right + width > screenWidth) {
+                layoutParams.width = screenWidth - targetViewRect.right -
+                        tooltipViewPortMargin - tooltipTargetViewMargin
+                return true
+            }
+            return false
+        }
+
+        override fun adjustSizeEnd(targetViewRect: Rect, screenWidth: Int): Boolean {
+            if (width > targetViewRect.left) {
+                layoutParams.width = targetViewRect.left - tooltipViewPortMargin -
+                        tooltipTargetViewMargin
+                return true
+            }
+            return false
         }
     }
 
@@ -839,8 +882,9 @@ class Tooltip(
         private const val CORNER_RADIUS_DEFAULT_DP = 8f
         private const val SHADOW_PADDING_DEFAULT_DP = 2f
         private const val SHADOW_WIDTH_DEFAULT_DP = 4f
-        private const val TOOLTIP_MARGIN_DEFAULT_DP = 0f
-        private const val TOOLTIP_PADDING_DEFAULT_DP = 8f
+        private const val TOOLTIP_TARGET_VIEW_MARGIN_DEFAULT_DP = 0f
+        private const val TOOLTIP_VIEW_PORT_MARGIN_DEFAULT_DP = 0f
+        private const val TOOLTIP_PADDING_DEFAULT_DP = 32f
 
         private const val MARGIN_SCREEN_BORDER_TOOLTIP_DP = 12f
 
