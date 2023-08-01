@@ -10,6 +10,6 @@
         android:layout_height="96dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="32dp"
-        android:text="@string/sample_target_view"/>
+        android:text="@string/show_tooltip"/>
 
 </FrameLayout>

@@ -35,8 +35,10 @@ data class TooltipConfig(
 }
 
 enum class ViewType {
+    SMALL_TEXT,
+    MEDIUM_TEXT,
     LARGE_TEXT,
-    SMALL
+    ICON
 }
 
 enum class TargetViewPosition {

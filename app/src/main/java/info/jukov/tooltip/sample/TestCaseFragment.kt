@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import info.jukov.tooltip.Tooltip
 import info.jukov.tooltip.TooltipBuilder
@@ -13,7 +14,7 @@ class TestCaseFragment : Fragment() {
 
     private lateinit var tooltipConfig: TooltipConfig
 
-    private lateinit var targetView: View
+    private lateinit var targetView: Button
 
     private var tooltip: Tooltip? = null
 
@@ -47,14 +48,25 @@ class TestCaseFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        targetView = view.findViewById<View>(R.id.button_target)
+        targetView = view.findViewById(R.id.button_target)
 
+        targetView.setOnClickListener {
+            showTooltip()
+        }
+
+        showTooltip()
+    }
+
+    private fun showTooltip() {
+        tooltip?.close()
         tooltip = TooltipBuilder(
             fragment = this,
             targetView = targetView,
             tooltipLayoutRes = when (tooltipConfig.viewType) {
-                ViewType.LARGE_TEXT -> R.layout.tooltip_text_long
-                ViewType.SMALL -> R.layout.tooltip_icon
+                ViewType.SMALL_TEXT -> R.layout.tooltip_text_small
+                ViewType.MEDIUM_TEXT -> R.layout.tooltip_text_medium
+                ViewType.LARGE_TEXT -> R.layout.tooltip_text_large
+                ViewType.ICON -> R.layout.tooltip_icon
             },
         )
             .setPosition(tooltipConfig.position)

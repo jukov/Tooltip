@@ -19,10 +19,22 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/radio_view_type_large_text"
+            android:id="@+id/radio_view_type_small_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:text="@string/small_text" />
+
+        <RadioButton
+            android:id="@+id/radio_view_type_medium_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/medium_text" />
+
+        <RadioButton
+            android:id="@+id/radio_view_type_large_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/large_text" />
 
         <RadioButton
@@ -37,7 +49,7 @@
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Target view position" />
+        android:text="@string/target_view_position" />
 
     <RadioGroup
         android:id="@+id/group_target_view_position"
@@ -55,44 +67,44 @@
             android:id="@+id/radio_target_view_position_top_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Top Start" />
+            android:text="@string/top_start" />
 
         <RadioButton
             android:id="@+id/radio_target_view_position_top_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Top End" />
+            android:text="@string/top_end" />
 
         <RadioButton
             android:id="@+id/radio_target_view_position_bottom_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bottom Start" />
+            android:text="@string/bottom_start" />
 
         <RadioButton
             android:id="@+id/radio_target_view_position_bottom_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bottom End" />
+            android:text="@string/bottom_end" />
 
 
         <RadioButton
             android:id="@+id/radio_target_view_position_vertical_scroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vertical Scroll" />
+            android:text="@string/vertical_scroll" />
 
         <RadioButton
             android:id="@+id/radio_target_view_position_vertical_nested_scroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vertical Nested Scroll" />
+            android:text="@string/vertical_nested_scroll" />
 
         <RadioButton
             android:id="@+id/radio_target_view_position_horizontal_scroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Horizontal Scroll" />
+            android:text="@string/horizontal_scroll" />
     </RadioGroup>
 
     <TextView

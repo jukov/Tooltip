@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ViewTooltip</string>
-    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut vestibulum enim. Donec ultrices nisl a sollicitudin gravida. Cras ipsum dolor, vulputate eget ex eget, suscipit sollicitudin mi. Aenean cursus augue quis aliquam pellentesque. Nunc at malesuada enim. Nam mauris sapien, condimentum a tortor eget, mollis dapibus dui. Ut elementum, turpis non tristique molestie, nunc metus rhoncus ante, vitae vulputate quam felis ut mauris. Cras vel varius metus. Fusce ut erat in tortor scelerisque cursus. Morbi laoreet risus urna, quis vestibulum ante tempus vitae. Sed consectetur est eu metus pretium, eget rutrum odio ornare. Etiam malesuada eu tellus vel egestas. Integer vitae turpis imperdiet, faucibus felis sit amet, ornare sem.</string>
+    <string name="lorem_large">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut vestibulum enim. Donec ultrices nisl a sollicitudin gravida. Cras ipsum dolor, vulputate eget ex eget, suscipit sollicitudin mi. Aenean cursus augue quis aliquam pellentesque. Nunc at malesuada enim. Nam mauris sapien, condimentum a tortor eget, mollis dapibus dui. Ut elementum, turpis non tristique molestie, nunc metus rhoncus ante, vitae vulputate quam felis ut mauris. Cras vel varius metus. Fusce ut erat in tortor scelerisque cursus. Morbi laoreet risus urna, quis vestibulum ante tempus vitae. Sed consectetur est eu metus pretium, eget rutrum odio ornare. Etiam malesuada eu tellus vel egestas. Integer vitae turpis imperdiet, faucibus felis sit amet, ornare sem.</string>
+    <string name="lorem_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut vestibulum enim. Donec ultrices nisl a sollicitudin gravida. Cras ipsum dolor, vulputate eget ex eget, suscipit sollicitudin mi. Aenean cursus augue quis aliquam pellentesque.</string>
+    <string name="lorem_small">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
 
     <string name="next">Next</string>
 
@@ -8,8 +10,10 @@
     <string name="showcase">Showcase</string>
     <string name="test_cases">Test cases</string>
     <string name="tooltip_sample_app">Tooltip sample App</string>
-    <string name="sample_target_view">Sample target view</string>
+    <string name="show_tooltip">Show Tooltip</string>
     <string name="view_type">View type</string>
+    <string name="small_text">Small text</string>
+    <string name="medium_text">Medium text</string>
     <string name="large_text">Large text</string>
     <string name="icon">Icon</string>
     <string name="start">Start</string>
@@ -18,4 +22,12 @@
     <string name="position">Position</string>
     <string name="top">Top</string>
     <string name="bottom">Bottom</string>
+    <string name="target_view_position">Target view position</string>
+    <string name="top_start">Top Start</string>
+    <string name="top_end">Top End</string>
+    <string name="bottom_start">Bottom Start</string>
+    <string name="bottom_end">Bottom End</string>
+    <string name="vertical_scroll">Vertical Scroll</string>
+    <string name="vertical_nested_scroll">Vertical Nested Scroll</string>
+    <string name="horizontal_scroll">Horizontal Scroll</string>
 </resources>

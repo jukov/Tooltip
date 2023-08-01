@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="DataExtractionRules">
-        <activity android:name="info.jukov.tooltip.sample.MainActivity"
+        <activity android:name="info.jukov.tooltip.sample.TestCasesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,8 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="info.jukov.tooltip.sample.TestCasesActivity"/>
     </application>
 
 </manifest>

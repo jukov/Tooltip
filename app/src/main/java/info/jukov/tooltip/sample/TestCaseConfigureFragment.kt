@@ -23,9 +23,11 @@ class TestCaseConfigureFragment : Fragment() {
         val radioGroupPosition = requireView().findViewById<RadioGroup>(R.id.group_position)
         return TooltipConfig(
             viewType = when (radioGroupViewType.checkedRadioButtonId) {
+                R.id.radio_view_type_small_text -> ViewType.SMALL_TEXT
+                R.id.radio_view_type_medium_text -> ViewType.MEDIUM_TEXT
                 R.id.radio_view_type_large_text -> ViewType.LARGE_TEXT
-                R.id.radio_view_type_icon -> ViewType.SMALL
-                else -> ViewType.SMALL
+                R.id.radio_view_type_icon -> ViewType.ICON
+                else -> ViewType.SMALL_TEXT
             },
             targetViewPosition = when (radioGroupTargetViewPosition.checkedRadioButtonId) {
                 R.id.radio_target_view_position_center -> TargetViewPosition.CENTER
