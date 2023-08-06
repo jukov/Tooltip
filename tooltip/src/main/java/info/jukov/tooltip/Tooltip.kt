@@ -37,39 +37,38 @@ class Tooltip(
     private val window: Window
 ) : FrameLayout(context) {
 
-    var arrowWidth: Float = 0f
-    var arrowHeight: Float = 0f
-    var arrowSourceMargin: Float = 0f
-    var arrowTargetMargin: Float = 0f
+    private var arrowWidth: Float = 0f
+    private var arrowHeight: Float = 0f
+    private var arrowSourceMargin: Float = 0f
+    private var arrowTargetMargin: Float = 0f
 
-    var cornerRadius: Float = 0f
+    private var cornerRadius: Float = 0f
 
-    var shadowColor: Int = COLOR_SHADOW_DEFAULT
-    var shadowPadding: Float = 0f
-    var shadowWidth: Float = 0f
+    private var shadowColor: Int = COLOR_SHADOW_DEFAULT
+    private var shadowPadding: Float = 0f
+    private var shadowWidth: Float = 0f
 
-    //TODO remove tooltip from names
-    var tooltipTargetViewMargin: Int = 0
-    var tooltipViewPortMargin: Int = 0
+    private var targetViewMargin: Int = 0
+    private var viewPortMargin: Int = 0
 
-    var tooltipPaddingStart: Float = 0f
-    var tooltipPaddingTop: Float = 0f
-    var tooltipPaddingEnd: Float = 0f
-    var tooltipPaddingBottom: Float = 0f
+    private var paddingStart: Float = 0f
+    private var paddingTop: Float = 0f
+    private var paddingEnd: Float = 0f
+    private var paddingBottom: Float = 0f
 
-    var color: Int
+    private var color: Int
         get() = bubblePaint.color
         set(value) {
             bubblePaint.color = value
         }
 
-    var borderColor: Int
+    private var borderColor: Int
         get() = borderPaint.color
         set(value) {
             borderPaint.color = value
         }
 
-    var borderWidth: Float
+    private var borderWidth: Float
         get() = borderPaint.strokeWidth
         set(value) {
             borderPaint.strokeWidth = value
@@ -77,54 +76,55 @@ class Tooltip(
 
     private var borderEnabled: Boolean = false
 
-    var clickToHide = false
-    var clickOutsideToHide = false
+    private var clickToHide = false
+    private var clickOutsideToHide = false
 
     var cancelable = false
+        private set
 
     var isClosed = false
         private set
 
-    internal var autoHide = false
-    internal var autoHideAfterMillis: Long = 0
+    private var autoHide = false
+    private var autoHideAfterMillis: Long = 0
 
-    var onDisplayListener: ((View) -> Unit)? = null
-    var onHideListener: ((View) -> Unit)? = null
-    var afterHideListener: ((View) -> Unit)? = null
+    internal var onDisplayListener: ((View) -> Unit)? = null
+    internal var onHideListener: ((View) -> Unit)? = null
+    internal var afterHideListener: ((View) -> Unit)? = null
 
-    var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
+    internal var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
     private val dimAnimation: TooltipAnimation = FadeTooltipAnimation()
 
-    var position = Position.BOTTOM
+    internal var position = Position.BOTTOM
         set(value) {
             field = value
             when (value) {
                 Position.TOP -> setPaddingRelative(
-                    tooltipPaddingStart.roundToInt(),
-                    tooltipPaddingTop.roundToInt(),
-                    tooltipPaddingEnd.roundToInt(),
-                    tooltipPaddingBottom.roundToInt() + arrowHeight.roundToInt()
+                    paddingStart.roundToInt(),
+                    paddingTop.roundToInt(),
+                    paddingEnd.roundToInt(),
+                    paddingBottom.roundToInt() + arrowHeight.roundToInt()
                 )
 
                 Position.BOTTOM -> setPaddingRelative(
-                    tooltipPaddingStart.roundToInt(),
-                    tooltipPaddingTop.roundToInt() + arrowHeight.roundToInt(),
-                    tooltipPaddingEnd.roundToInt(),
-                    tooltipPaddingBottom.roundToInt()
+                    paddingStart.roundToInt(),
+                    paddingTop.roundToInt() + arrowHeight.roundToInt(),
+                    paddingEnd.roundToInt(),
+                    paddingBottom.roundToInt()
                 )
 
                 Position.START -> setPaddingRelative(
-                    tooltipPaddingStart.roundToInt(),
-                    tooltipPaddingTop.roundToInt(),
-                    tooltipPaddingEnd.roundToInt() + arrowHeight.roundToInt(),
-                    tooltipPaddingBottom.roundToInt()
+                    paddingStart.roundToInt(),
+                    paddingTop.roundToInt(),
+                    paddingEnd.roundToInt() + arrowHeight.roundToInt(),
+                    paddingBottom.roundToInt()
                 )
 
                 Position.END -> setPaddingRelative(
-                    tooltipPaddingStart.roundToInt() + arrowHeight.roundToInt(),
-                    tooltipPaddingTop.roundToInt(),
-                    tooltipPaddingEnd.roundToInt(),
-                    tooltipPaddingBottom.roundToInt()
+                    paddingStart.roundToInt() + arrowHeight.roundToInt(),
+                    paddingTop.roundToInt(),
+                    paddingEnd.roundToInt(),
+                    paddingBottom.roundToInt()
                 )
             }
             postInvalidate()
@@ -228,27 +228,27 @@ class Tooltip(
             R.styleable.Tooltip_cornerRadius,
             dpToPx(CORNER_RADIUS_DEFAULT_DP, context)
         )
-        tooltipTargetViewMargin = typedArray.getDimension(
+        targetViewMargin = typedArray.getDimension(
             R.styleable.Tooltip_tooltipTargetViewMargin,
             dpToPx(TOOLTIP_TARGET_VIEW_MARGIN_DEFAULT_DP, context)
         ).roundToInt()
-        tooltipViewPortMargin = typedArray.getDimension(
+        viewPortMargin = typedArray.getDimension(
             R.styleable.Tooltip_tooltipViewPortMargin,
             dpToPx(TOOLTIP_VIEW_PORT_MARGIN_DEFAULT_DP, context)
         ).roundToInt()
-        tooltipPaddingStart = typedArray.getDimension(
+        paddingStart = typedArray.getDimension(
             R.styleable.Tooltip_tooltipPaddingStart,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
-        tooltipPaddingTop = typedArray.getDimension(
+        paddingTop = typedArray.getDimension(
             R.styleable.Tooltip_tooltipPaddingTop,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
-        tooltipPaddingEnd = typedArray.getDimension(
+        paddingEnd = typedArray.getDimension(
             R.styleable.Tooltip_tooltipPaddingEnd,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
-        tooltipPaddingBottom = typedArray.getDimension(
+        paddingBottom = typedArray.getDimension(
             R.styleable.Tooltip_tooltipPaddingBottom,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
@@ -564,8 +564,8 @@ class Tooltip(
                 Position.TOP, Position.BOTTOM -> {
                     val tooltipWidth: Int
 
-                    if (width + tooltipViewPortMargin * 2 >= screenWidth) {
-                        layoutParams.width = screenWidth - (tooltipViewPortMargin * 2)
+                    if (width + viewPortMargin * 2 >= screenWidth) {
+                        layoutParams.width = screenWidth - (viewPortMargin * 2)
                         tooltipWidth = layoutParams.width
                         changed = true
                     } else {
@@ -695,31 +695,31 @@ class Tooltip(
 
             when (position) {
                 Position.START -> {
-                    x = targetViewRect.left - width - tooltipTargetViewMargin
+                    x = targetViewRect.left - width - targetViewMargin
                     y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
-                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
+                        .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.TOP -> {
-                    val xMax = screenWidth - width - tooltipViewPortMargin
+                    val xMax = screenWidth - width - viewPortMargin
 
-                    y = targetViewRect.top - height - tooltipTargetViewMargin
+                    y = targetViewRect.top - height - targetViewMargin
                     x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
-                        .coerceIn(tooltipViewPortMargin, xMax)
+                        .coerceIn(viewPortMargin, xMax)
                 }
 
                 Position.END -> {
-                    x = targetViewRect.right + tooltipTargetViewMargin
+                    x = targetViewRect.right + targetViewMargin
                     y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
-                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
+                        .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.BOTTOM -> {
-                    val xMax = screenWidth - width - tooltipViewPortMargin
+                    val xMax = screenWidth - width - viewPortMargin
 
-                    y = targetViewRect.bottom + tooltipTargetViewMargin
+                    y = targetViewRect.bottom + targetViewMargin
                     x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
-                        .coerceIn(tooltipViewPortMargin, xMax)
+                        .coerceIn(viewPortMargin, xMax)
                 }
             }
 
@@ -729,8 +729,8 @@ class Tooltip(
 
         override fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean {
             if (width > targetViewRect.left) {
-                layoutParams.width = targetViewRect.left - tooltipViewPortMargin -
-                        tooltipTargetViewMargin
+                layoutParams.width = targetViewRect.left - viewPortMargin -
+                        targetViewMargin
                 return true
             }
             return false
@@ -739,7 +739,7 @@ class Tooltip(
         override fun adjustSizeEnd(targetViewRect: Rect, screenWidth: Int): Boolean {
             if (targetViewRect.right + width > screenWidth) {
                 layoutParams.width = screenWidth - targetViewRect.right -
-                        tooltipViewPortMargin - tooltipTargetViewMargin
+                        viewPortMargin - targetViewMargin
                 return true
             }
             return false
@@ -821,33 +821,33 @@ class Tooltip(
 
             when (position) {
                 Position.START -> {
-                    x = -(screenWidth - targetViewRect.right - width) + tooltipTargetViewMargin
+                    x = -(screenWidth - targetViewRect.right - width) + targetViewMargin
                     y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
-                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
+                        .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.TOP -> {
-                    val xMax = -(screenWidth - width - tooltipViewPortMargin)
+                    val xMax = -(screenWidth - width - viewPortMargin)
 
-                    y = targetViewRect.top - height - tooltipTargetViewMargin
+                    y = targetViewRect.top - height - targetViewMargin
                     x =
                         (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
-                            .coerceIn(xMax, -tooltipViewPortMargin)
+                            .coerceIn(xMax, -viewPortMargin)
                 }
 
                 Position.END -> {
-                    x = -(screenWidth - targetViewRect.left) - tooltipTargetViewMargin
+                    x = -(screenWidth - targetViewRect.left) - targetViewMargin
                     y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
-                        .coerceIn(tooltipViewPortMargin, screenHeight - tooltipViewPortMargin)
+                        .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.BOTTOM -> {
-                    val xMax = -(screenWidth - width - tooltipViewPortMargin)
+                    val xMax = -(screenWidth - width - viewPortMargin)
 
-                    y = targetViewRect.bottom + tooltipTargetViewMargin
+                    y = targetViewRect.bottom + targetViewMargin
                     x =
                         (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
-                            .coerceIn(xMax, -tooltipViewPortMargin)
+                            .coerceIn(xMax, -viewPortMargin)
                 }
             }
 
@@ -858,7 +858,7 @@ class Tooltip(
         override fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean {
             if (targetViewRect.right + width > screenWidth) {
                 layoutParams.width = screenWidth - targetViewRect.right -
-                        tooltipViewPortMargin - tooltipTargetViewMargin
+                        viewPortMargin - targetViewMargin
                 return true
             }
             return false
@@ -866,8 +866,8 @@ class Tooltip(
 
         override fun adjustSizeEnd(targetViewRect: Rect, screenWidth: Int): Boolean {
             if (width > targetViewRect.left) {
-                layoutParams.width = targetViewRect.left - tooltipViewPortMargin -
-                        tooltipTargetViewMargin
+                layoutParams.width = targetViewRect.left - viewPortMargin -
+                        targetViewMargin
                 return true
             }
             return false

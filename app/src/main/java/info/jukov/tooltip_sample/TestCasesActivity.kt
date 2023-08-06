@@ -1,12 +1,9 @@
-package info.jukov.tooltip.sample
+package info.jukov.tooltip_sample
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import info.jukov.tooltip_sample.R
 
 class TestCasesActivity : AppCompatActivity() {
 
@@ -21,18 +18,13 @@ class TestCasesActivity : AppCompatActivity() {
             .commit()
 
         initToolbar()
-        handleBackPressed()
-    }
-
-    private fun handleBackPressed() {
-
     }
 
     private fun initToolbar(title: String = getString(R.string.app_name)) {
         supportActionBar?.let { actionBar ->
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_close)
-            actionBar.title = title //TODO text size
+            actionBar.title = title
         }
     }
 
@@ -84,7 +76,7 @@ class TestCasesActivity : AppCompatActivity() {
         (supportFragmentManager
             .findFragmentByTag(CONFIGURE_FRAGMENT_TAG) as? TestCaseConfigureFragment)
             ?.makeConfig()
-            ?.let { config -> TestCaseFragment.newInstanse(config) }
+            ?.let { config -> TestCaseFragment.newInstance(config) }
             ?.let { fragmenr ->
                 supportFragmentManager
                     .beginTransaction()
@@ -103,13 +95,5 @@ class TestCasesActivity : AppCompatActivity() {
     companion object {
 
         private const val CONFIGURE_FRAGMENT_TAG = "CONFIGURE_FRAGMENT_TAG"
-        fun start(context: Context) {
-            context.startActivity(
-                Intent(
-                    context,
-                    TestCasesActivity::class.java
-                )
-            )
-        }
     }
 }

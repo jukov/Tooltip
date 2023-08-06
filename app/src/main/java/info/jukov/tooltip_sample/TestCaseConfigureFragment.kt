@@ -1,4 +1,4 @@
-package info.jukov.tooltip.sample
+package info.jukov.tooltip_sample
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import info.jukov.tooltip.Tooltip
-import info.jukov.tooltip_sample.R
 
 class TestCaseConfigureFragment : Fragment() {
 

@@ -1,4 +1,4 @@
-package info.jukov.tooltip.sample
+package info.jukov.tooltip_sample
 
 import android.os.Build
 import android.os.Bundle

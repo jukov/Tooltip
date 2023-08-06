@@ -1,4 +1,4 @@
-package info.jukov.tooltip.sample
+package info.jukov.tooltip_sample
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import info.jukov.tooltip.Tooltip
 import info.jukov.tooltip.TooltipBuilder
-import info.jukov.tooltip_sample.R
 
 class TestCaseFragment : Fragment() {
 
@@ -51,7 +50,12 @@ class TestCaseFragment : Fragment() {
         targetView = view.findViewById(R.id.button_target)
 
         targetView.setOnClickListener {
-            showTooltip()
+            if (tooltip != null) {
+                tooltip?.close()
+                tooltip = null
+            } else {
+                showTooltip()
+            }
         }
 
         showTooltip()
@@ -80,7 +84,7 @@ class TestCaseFragment : Fragment() {
 
     companion object {
 
-        fun newInstanse(config: TooltipConfig): TestCaseFragment =
+        fun newInstance(config: TooltipConfig): TestCaseFragment =
             TestCaseFragment()
                 .apply {
                     arguments = Bundle().apply {

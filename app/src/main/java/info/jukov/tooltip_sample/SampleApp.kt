@@ -1,4 +1,4 @@
-package info.jukov.tooltip.sample
+package info.jukov.tooltip_sample
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
