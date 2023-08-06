@@ -1,170 +1,136 @@
-# ViewTooltip
+# Tooltip
 
-[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/with_border.gif)](https://www.github.com/florent37/ViewTooltip)
+Tooltip is inspired by [ViewTooltip](https://github.com/florent37/ViewTooltip) lib for showing
+tooltips in Android app.
 
-```java
-ViewTooltip
-        .on(this, editText)
-        .autoHide(true, 1000)
-        .corner(30)
-        .position(ViewTooltip.Position.RIGHT)
-        .text("Right")
-        .show();
-```
+* Automatically adjusted by viewport borders
+* Fully customisable: position, padding, margin, colors, corner radius, and more.
+* Can be anchored to views in scrollable containers:
+    * ScrollView,
+    * NestedScrollView
+    * HorizontalScrollView
+    * RecyclerView
+* Minimum Android SDK: **17**
 
-<a href="https://goo.gl/WXW8Dc">
-  <img alt="Android app on Google Play" src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
-</a>
+## Setup
 
+### Gradle
 
-# Download
+**build.gradle** (project)
 
-<a href='https://ko-fi.com/A160LCC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+```gradle
+buildscript {
+    ...
+}
 
-[ ![Download](https://api.bintray.com/packages/florent37/maven/viewtooltip/images/download.svg) ](https://bintray.com/florent37/maven/viewtooltip/_latestVersion)
-```java
-dependencies {
-    implementation 'com.github.florent37:viewtooltip:(last version)'
+allprojects {
+    repositories {
+    
+        ...
+        
+        // Add jitpack repository
+        maven {
+            url "https://jitpack.io"  
+        }
+    }
 }
 ```
 
-# Methods
+**build.gradle** (app)
 
-[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/autoHide.gif)](https://www.github.com/florent37/ViewTooltip)
+```gradle
 
-```java
-ViewTooltip
-        .on(this, editText)
-        
-        .autoHide(true / false, 1000)
-        .clickToHide(true / false)
-        
-        .align(START / CENTER)
-        
-        .position(TOP / LEFT / RIGHT / BOTTOM)
-        
-        .text("The text")
-        
-        .textColor(Color.WHITE)
-        .color(Color.BLACK)
-        
-        .corner(10)
-
-        .arrowWidth(15)
-        .arrowHeight(15)
-
-        .distanceWithView(0)
-        
-        //change the opening animation
-        .animation(new ViewTooltip.TooltipAnimation(){...})
-        
-        //listeners
-        .onDisplay(new ViewTooltip.ListenerDisplay() {
-            @Override
-            public void onDisplay(View view) {
-                
-            }
-        })
-        .onHide(new ViewTooltip.ListenerHide() {
-            @Override
-            public void onHide(View view) {
-                
-            }
-        })
-        .show();
+android {
+    ...
+}
+  
+dependencies {
+    implementation 'com.github.jukov:tooltip:1'
+}
 ```
 
-# Prevent view to not be outside screen
+## Usage
 
-ViewTooltip will not allow to be outside of screen,
-it will automatically adjust his size
+**styles.xml**
 
-[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clip_screen_large.gif)](https://www.github.com/florent37/ViewTooltip)
+```xml
 
-# History
+<!-- Override Tooltip theme -->
+<style name="MyTooltipTheme" parent="Tooltip">
+    <item name="arrowWidth">16dp</item>
+    <item name="arrowHeight">8dp</item>
+    <item name="arrowSourceMargin">0dp</item>
+    <item name="arrowTargetMargin">0dp</item>
+    <item name="cornerRadius">8dp</item>
+    <item name="shadowPadding">2dp</item>
+    <item name="shadowWidth">4dp</item>
+    <item name="tooltipTargetViewMargin">2dp</item>
+    <item name="tooltipViewPortMargin">8dp</item>
+    <item name="paddingStart">8dp</item>
+    <item name="paddingTop">8dp</item>
+    <item name="paddingEnd">8dp</item>
+    <item name="paddingBottom">8dp</item>
+    <item name="backgroundColor">@color/background_default</item>
+    <item name="shadowColor">@color/shadow_default</item>
+    <item name="borderEnabled">false</item>
+    <item name="borderColor">@android:color/transparent</item>
+    <item name="borderWidth">0dp</item>
+    <item name="cancelable">true</item>
+    <item name="clickToHide">true</item>
+    <item name="autoHide">false</item>
+    <item name="autoHideAfterMillis">0</item>
+    <item name="dimEnabled">false</item>
+    <item name="dimColor">@android:color/transparent</item>
+    <item name="dimTargetViewCornerRadius">8dp</item>
+    <item name="dimTargetViewPadding">1dp</item>
+</style>
+```
 
-# 1.2.0
-- Compatible with AndroidX
+**Code**
 
-# 1.1.7
-- Set text as Int
-- Added shadowColor
+```kotlin
 
-# 1.1.5
-- Use Fragment V4
-- Added aistanceWithView
+//Init tooltip for Fragment
+tooltip = TooltipBuilder(
+    fragment = this,
+    targetView = targetView,
+    tooltipLayoutRes = R.layout.tooltip_layout, // Any layout can be shown in Tooltip,
+)
+    .setTheme(R.style.MyTooltipTheme)
+    .setPosition(Tooltip.Position.TOP)
+    .setTooltipAnimation(FadeTooltipAnimation())
+    .setOnDisplayListener { ... }
+    .setOnHideListener { ... }
+    .show()
 
-# 1.1.4
-- Added arrowWidth / arrowHeight
+//Init tooltip for Activity
+tooltip = TooltipBuilder(
+    activity = this,
+    targetView = targetView,
+    tooltipLayoutRes = R.layout.tooltip_layout, // Any layout can be shown in Tooltip,
+)
+    .setTheme(R.style.MyTooltipTheme)
+    .setPosition(Tooltip.Position.TOP)
+    .setTooltipAnimation(FadeTooltipAnimation())
+    .setOnDisplayListener { ... }
+    .setOnHideListener { ... }
+    .show()
 
-## 1.1.3
-- Fix align bottom, text out of screen
+```
 
-## 1.1.1
-- Added shadow
+## License
 
-## 1.0.8 
-- Clip tooltip to screen (top / bottom) 
-- Text format HTML
+```txt
+Copyright 2023 Alexandr Zhukov 
 
-## 1.0.6 
-- Fix align 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-## 1.0.5
-- .customView()
-- .remove()
-
-## 1.0.3
-- Clip tooltip to screen width
-
-## 1.0.2
-- Added corner
-
-# Credits   
-
-Author: Florent Champigny 
-
-Blog : [http://www.tutos-android-france.com/](http://www.www.tutos-android-france.com/)
-
-Fiches Plateau Moto : [https://www.fiches-plateau-moto.fr/](https://www.fiches-plateau-moto.fr/)
-
-<a href="https://goo.gl/WXW8Dc">
-  <img alt="Android app on Google Play" src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
-</a>
-
-<a href="https://plus.google.com/+florentchampigny">
-  <img alt="Follow me on Google+"
-       src="https://raw.githubusercontent.com/florent37/DaVinci/master/mobile/src/main/res/drawable-hdpi/gplus.png" />
-</a>
-<a href="https://twitter.com/florent_champ">
-  <img alt="Follow me on Twitter"
-       src="https://raw.githubusercontent.com/florent37/DaVinci/master/mobile/src/main/res/drawable-hdpi/twitter.png" />
-</a>
-<a href="https://www.linkedin.com/in/florentchampigny">
-  <img alt="Follow me on LinkedIn"
-       src="https://raw.githubusercontent.com/florent37/DaVinci/master/mobile/src/main/res/drawable-hdpi/linkedin.png" />
-</a>
-
-
-## Third Party Bindings
-
-### React Native
-You may now use this library with [React Native](https://github.com/facebook/react-native) via the module [here](https://github.com/prscX/react-native-tooltips)
-
-
-License
---------
-
-    Copyright 2017 Florent37, Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
