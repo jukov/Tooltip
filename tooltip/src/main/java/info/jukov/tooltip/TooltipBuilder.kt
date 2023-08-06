@@ -31,7 +31,7 @@ class TooltipBuilder(
         fragment: Fragment,
         @IdRes targetViewRes: Int,
         @IdRes touchTargetViewRes: Int = targetViewRes,
-        @LayoutRes tooltipLayoutRes: Int
+        @LayoutRes tooltipLayoutRes: Int,
     ) : this(
         fragment,
         fragment.requireView().findViewById(targetViewRes),
@@ -43,7 +43,7 @@ class TooltipBuilder(
         fragment: Fragment,
         targetView: View,
         touchTargetView: View = targetView,
-        @LayoutRes tooltipLayoutRes: Int
+        @LayoutRes tooltipLayoutRes: Int,
     ) : this(
         fragment,
         targetView,
@@ -55,7 +55,7 @@ class TooltipBuilder(
         fragment: Fragment,
         targetView: View,
         touchTargetView: View,
-        tooltipView: View
+        tooltipView: View,
     ) : this(
         fragment.requireActivity(),
         targetView,
@@ -80,7 +80,7 @@ class TooltipBuilder(
         activity: Activity,
         @IdRes targetViewRes: Int,
         @IdRes touchTargetViewRes: Int = targetViewRes,
-        @LayoutRes tooltipLayoutRes: Int
+        @LayoutRes tooltipLayoutRes: Int,
     ) : this(
         activity,
         activity.findViewById(targetViewRes),
@@ -92,7 +92,7 @@ class TooltipBuilder(
         activity: Activity,
         targetView: View,
         tooltipView: View,
-        touchTargetView: View
+        touchTargetView: View,
     ) : this(activity, targetView, tooltipView, touchTargetView, activity.window)
 
     fun setTheme(@StyleRes themeRes: Int): TooltipBuilder = apply {

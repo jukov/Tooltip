@@ -237,19 +237,19 @@ class Tooltip(
             dpToPx(TOOLTIP_VIEW_PORT_MARGIN_DEFAULT_DP, context)
         ).roundToInt()
         paddingStart = typedArray.getDimension(
-            R.styleable.Tooltip_tooltipPaddingStart,
+            R.styleable.Tooltip_paddingStart,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
         paddingTop = typedArray.getDimension(
-            R.styleable.Tooltip_tooltipPaddingTop,
+            R.styleable.Tooltip_paddingTop,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
         paddingEnd = typedArray.getDimension(
-            R.styleable.Tooltip_tooltipPaddingEnd,
+            R.styleable.Tooltip_paddingEnd,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
         paddingBottom = typedArray.getDimension(
-            R.styleable.Tooltip_tooltipPaddingBottom,
+            R.styleable.Tooltip_paddingBottom,
             dpToPx(TOOLTIP_PADDING_DEFAULT_DP, context)
         )
         bubblePaint.color =

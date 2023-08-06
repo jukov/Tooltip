@@ -6,4 +6,33 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+<!---->
+    <style name="MyTooltipTheme" parent="Tooltip">
+        <item name="arrowWidth">16dp</item>
+        <item name="arrowHeight">8dp</item>
+        <item name="arrowSourceMargin">0dp</item>
+        <item name="arrowTargetMargin">0dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="shadowPadding">2dp</item>
+        <item name="shadowWidth">4dp</item>
+        <item name="tooltipTargetViewMargin">2dp</item>
+        <item name="tooltipViewPortMargin">8dp</item>
+        <item name="paddingStart">8dp</item>
+        <item name="paddingTop">8dp</item>
+        <item name="paddingEnd">8dp</item>
+        <item name="paddingBottom">8dp</item>
+        <item name="backgroundColor">@color/background_default</item>
+        <item name="shadowColor">@color/shadow_default</item>
+        <item name="borderEnabled">false</item>
+        <item name="borderColor">@android:color/transparent</item>
+        <item name="borderWidth">0dp</item>
+        <item name="cancelable">true</item>
+        <item name="clickToHide">true</item>
+        <item name="autoHide">false</item>
+        <item name="autoHideAfterMillis">0</item>
+        <item name="dimEnabled">false</item>
+        <item name="dimColor">@android:color/transparent</item>
+        <item name="dimTargetViewCornerRadius">8dp</item>
+        <item name="dimTargetViewPadding">1dp</item>
+    </style>
 </resources>

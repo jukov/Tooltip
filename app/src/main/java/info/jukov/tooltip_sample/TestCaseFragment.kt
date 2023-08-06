@@ -73,6 +73,7 @@ class TestCaseFragment : Fragment() {
                 ViewType.ICON -> R.layout.tooltip_icon
             },
         )
+            .setTheme(R.style.MyTooltipTheme)
             .setPosition(tooltipConfig.position)
             .show()
     }
