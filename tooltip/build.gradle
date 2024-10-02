@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-def version = "1"
+def version = "3"
 
 android {
     namespace "info.jukov.tooltip"

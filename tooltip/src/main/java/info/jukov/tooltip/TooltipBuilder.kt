@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment
 class TooltipBuilder(
     private val activity: Activity,
     private val targetView: View,
-    private val tooltipView: View,
     private val touchTargetView: View,
+    private val tooltipView: View,
     private val window: Window
 ) {
     private var themeRes: Int = R.style.Tooltip
@@ -59,8 +59,8 @@ class TooltipBuilder(
     ) : this(
         fragment.requireActivity(),
         targetView,
-        tooltipView,
         touchTargetView,
+        tooltipView,
         (fragment as? DialogFragment)?.dialog?.window ?: fragment.requireActivity().window
     )
 
