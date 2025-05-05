@@ -25,4 +25,6 @@
     <string name="vertical_scroll">Vertical Scroll</string>
     <string name="vertical_nested_scroll">Vertical Nested Scroll</string>
     <string name="horizontal_scroll">Horizontal Scroll</string>
+    <string name="exact_x">Exact X position</string>
+    <string name="exact_y">Exact Y position</string>
 </resources>

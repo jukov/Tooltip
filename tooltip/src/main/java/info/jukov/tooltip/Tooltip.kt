@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Point
+import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Build
@@ -94,6 +95,8 @@ class Tooltip(
 
     internal var tooltipAnimation: TooltipAnimation = FadeTooltipAnimation()
     private val dimAnimation: TooltipAnimation = FadeTooltipAnimation()
+
+    internal var exactPosition: PointF? = null
 
     internal var position = Position.BOTTOM
         set(value) {
@@ -318,7 +321,7 @@ class Tooltip(
         positioningDelegate.updateBubblePath()
     }
 
-    override fun draw(canvas: Canvas?) {
+    override fun draw(canvas: Canvas) {
         if (bubblePath.isEmpty) return
         super.draw(canvas)
     }
@@ -575,14 +578,18 @@ class Tooltip(
                     var adjustedLeft = targetViewRect.left
                     var adjustedRight = targetViewRect.right
 
-                    if (targetViewRect.centerX() + tooltipWidth / 2f > screenWidth) {
-                        val diff = targetViewRect.centerX() + tooltipWidth / 2f - screenWidth
+                    val x = exactPosition?.let { point ->
+                        targetViewRect.left + point.x.toInt()
+                    } ?: targetViewRect.centerX()
+
+                    if (x + tooltipWidth / 2f > screenWidth) {
+                        val diff = x + tooltipWidth / 2f - screenWidth
                         adjustedLeft -= diff.toInt()
                         adjustedRight -= diff.toInt()
                         changed = true
 
-                    } else if (targetViewRect.centerX() - tooltipWidth / 2f < 0) {
-                        val diff = -(targetViewRect.centerX() - tooltipWidth / 2f)
+                    } else if (x - tooltipWidth / 2f < 0) {
+                        val diff = -(x - tooltipWidth / 2f)
                         adjustedLeft += diff.toInt()
                         adjustedRight += diff.toInt()
                         changed = true
@@ -641,13 +648,21 @@ class Tooltip(
             val right = bubbleRect.right - spacingRight
             val bottom = bubbleRect.bottom - spacingBottom
 
-            val centerX = targetViewRect.centerX() - x
-            val centerY = targetViewRect.centerY() - y
+            val arrowX: Float
+            val arrowY: Float
+            val exactPosition = exactPosition
+            if (exactPosition != null) {
+                arrowX = (targetViewRect.left + exactPosition.x) - x
+                arrowY = (targetViewRect.top + exactPosition.y) - y
+            } else {
+                arrowX = targetViewRect.centerX() - x
+                arrowY = targetViewRect.centerY() - y
+            }
 
-            val arrowSourceX = if (position.isVertical()) centerX + arrowSourceMargin else centerX
-            val arrowTargetX = if (position.isVertical()) centerX + arrowTargetMargin else centerX
-            val arrowSourceY = if (position.isHorizontal()) centerY - arrowSourceMargin else centerY
-            val arrowTargetY = if (position.isHorizontal()) centerY - arrowTargetMargin else centerY
+            val arrowSourceX = if (position.isVertical()) arrowX + arrowSourceMargin else arrowX
+            val arrowTargetX = if (position.isVertical()) arrowX + arrowTargetMargin else arrowX
+            val arrowSourceY = if (position.isHorizontal()) arrowY - arrowSourceMargin else arrowY
+            val arrowTargetY = if (position.isHorizontal()) arrowY - arrowTargetMargin else arrowY
 
             bubblePath.moveTo(left + cornerRadius / 2f, top)
 
@@ -690,41 +705,69 @@ class Tooltip(
         }
 
         override fun setupPosition(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
-            val x: Int
-            val y: Int
+            val exactPosition = exactPosition
+
+            var x: Int
+            var y: Int
+            if (exactPosition != null) {
+                x = targetViewRect.left + exactPosition.x.toInt()
+                y = targetViewRect.top + exactPosition.y.toInt()
+            } else {
+                when (position) {
+                    Position.START -> {
+                        x = targetViewRect.left
+                        y = targetViewRect.centerY()
+                    }
+                    Position.END -> {
+                        x = targetViewRect.right
+                        y = targetViewRect.centerY()
+                    }
+                    Position.TOP -> {
+                        x = targetViewRect.centerX()
+                        y = targetViewRect.top
+                    }
+                    Position.BOTTOM -> {
+                        x = targetViewRect.centerX()
+                        y = targetViewRect.bottom
+                    }
+                }
+            }
+
+            val resultX: Int
+            val resultY: Int
 
             when (position) {
                 Position.START -> {
-                    x = targetViewRect.left - width - targetViewMargin
-                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                    resultX = x - width - targetViewMargin
+                    resultY = (y - height / 2)
                         .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.TOP -> {
                     val xMax = screenWidth - width - viewPortMargin
 
-                    y = targetViewRect.top - height - targetViewMargin
-                    x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
+                    resultY = y - height - targetViewMargin
+                    resultX = (x - width / 2)
                         .coerceIn(viewPortMargin, xMax)
                 }
 
                 Position.END -> {
-                    x = targetViewRect.right + targetViewMargin
-                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                    resultX = x + targetViewMargin
+                    resultY = (y - height / 2)
                         .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.BOTTOM -> {
                     val xMax = screenWidth - width - viewPortMargin
 
-                    y = targetViewRect.bottom + targetViewMargin
-                    x = (targetViewRect.left + (targetViewRect.width() - width) / 2)
+                    resultY = y + targetViewMargin
+                    resultX = (x - width / 2)
                         .coerceIn(viewPortMargin, xMax)
                 }
             }
 
-            translationX = x.toFloat()
-            translationY = y.toFloat()
+            translationX = resultX.toFloat()
+            translationY = resultY.toFloat()
         }
 
         override fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean {
@@ -767,13 +810,21 @@ class Tooltip(
             val right = bubbleRect.right - spacingRight
             val bottom = bubbleRect.bottom - spacingBottom
 
-            val centerX = targetViewRect.centerX() - x
-            val centerY = targetViewRect.centerY() - y
+            val arrowX: Float
+            val arrowY: Float
+            val exactPosition = exactPosition
+            if (exactPosition != null) {
+                arrowX = (targetViewRect.left + exactPosition.x) - x
+                arrowY = (targetViewRect.top + exactPosition.y) - y
+            } else {
+                arrowX = targetViewRect.centerX() - x
+                arrowY = targetViewRect.centerY() - y
+            }
 
-            val arrowSourceX = if (position.isVertical()) centerX + arrowSourceMargin else centerX
-            val arrowTargetX = if (position.isVertical()) centerX + arrowTargetMargin else centerX
-            val arrowSourceY = if (position.isHorizontal()) centerY - arrowSourceMargin else centerY
-            val arrowTargetY = if (position.isHorizontal()) centerY - arrowTargetMargin else centerY
+            val arrowSourceX = if (position.isVertical()) arrowX + arrowSourceMargin else arrowX
+            val arrowTargetX = if (position.isVertical()) arrowX + arrowTargetMargin else arrowX
+            val arrowSourceY = if (position.isHorizontal()) arrowY - arrowSourceMargin else arrowY
+            val arrowTargetY = if (position.isHorizontal()) arrowY - arrowTargetMargin else arrowY
 
             bubblePath.moveTo(left + cornerRadius / 2f, top)
 
@@ -816,43 +867,69 @@ class Tooltip(
         }
 
         override fun setupPosition(targetViewRect: Rect, screenWidth: Int, screenHeight: Int) {
-            val x: Int
-            val y: Int
+            val exactPosition = exactPosition
+
+            var x: Int
+            var y: Int
+            if (exactPosition != null) {
+                x = targetViewRect.left + exactPosition.x.toInt()
+                y = targetViewRect.top + exactPosition.y.toInt()
+            } else {
+                when (position) {
+                    Position.START -> {
+                        x = targetViewRect.right
+                        y = targetViewRect.centerY()
+                    }
+                    Position.END -> {
+                        x = targetViewRect.left
+                        y = targetViewRect.centerY()
+                    }
+                    Position.TOP -> {
+                        x = targetViewRect.centerX()
+                        y = targetViewRect.top
+                    }
+                    Position.BOTTOM -> {
+                        x = targetViewRect.centerX()
+                        y = targetViewRect.bottom
+                    }
+                }
+            }
+
+            val resultX: Int
+            val resultY: Int
 
             when (position) {
                 Position.START -> {
-                    x = -(screenWidth - targetViewRect.right - width) + targetViewMargin
-                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                    resultX = -(screenWidth - x - width) + targetViewMargin
+                    resultY = (y - height / 2)
                         .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.TOP -> {
                     val xMax = -(screenWidth - width - viewPortMargin)
 
-                    y = targetViewRect.top - height - targetViewMargin
-                    x =
-                        (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
+                    resultY = y - height - targetViewMargin
+                    resultX = (-(screenWidth - x) + width / 2)
                             .coerceIn(xMax, -viewPortMargin)
                 }
 
                 Position.END -> {
-                    x = -(screenWidth - targetViewRect.left) - targetViewMargin
-                    y = (targetViewRect.top + (targetViewRect.height() - height) / 2)
+                    resultX = -(screenWidth - x) - targetViewMargin
+                    resultY = (y - height / 2)
                         .coerceIn(viewPortMargin, screenHeight - viewPortMargin)
                 }
 
                 Position.BOTTOM -> {
                     val xMax = -(screenWidth - width - viewPortMargin)
 
-                    y = targetViewRect.bottom + targetViewMargin
-                    x =
-                        (-(screenWidth - targetViewRect.right) - (targetViewRect.width() - width) / 2)
+                    resultY = y + targetViewMargin
+                    resultX = (-(screenWidth - x) + width / 2)
                             .coerceIn(xMax, -viewPortMargin)
                 }
             }
 
-            translationX = x.toFloat()
-            translationY = y.toFloat()
+            translationX = resultX.toFloat()
+            translationY = resultY.toFloat()
         }
 
         override fun adjustSizeStart(targetViewRect: Rect, screenWidth: Int): Boolean {

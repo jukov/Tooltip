@@ -75,6 +75,11 @@ class TestCaseFragment : Fragment() {
         )
             .setTheme(R.style.MyTooltipTheme)
             .setPosition(tooltipConfig.position)
+            .apply {
+                tooltipConfig.exactPosition?.let {
+                    setExactPosition(it.x, it.y)
+                }
+            }
             .show()
     }
 

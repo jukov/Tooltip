@@ -1,9 +1,11 @@
 package info.jukov.tooltip_sample
 
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import info.jukov.tooltip.Tooltip
@@ -20,6 +22,13 @@ class TestCaseConfigureFragment : Fragment() {
         val radioGroupViewType = requireView().findViewById<RadioGroup>(R.id.group_view_type)
         val radioGroupTargetViewPosition = requireView().findViewById<RadioGroup>(R.id.group_target_view_position)
         val radioGroupPosition = requireView().findViewById<RadioGroup>(R.id.group_position)
+        val x = requireView().findViewById<EditText>(R.id.exact_x)?.text?.toString()?.toFloatOrNull()
+        val y = requireView().findViewById<EditText>(R.id.exact_y)?.text?.toString()?.toFloatOrNull()
+        val exactPosition = if (x != null && y != null) {
+            PointF(x,y)
+        } else {
+            null
+        }
         return TooltipConfig(
             viewType = when (radioGroupViewType.checkedRadioButtonId) {
                 R.id.radio_view_type_small_text -> ViewType.SMALL_TEXT
@@ -39,6 +48,7 @@ class TestCaseConfigureFragment : Fragment() {
                 R.id.radio_target_view_position_horizontal_scroll -> TargetViewPosition.HORIZONTAL_SCROLL
                 else -> TargetViewPosition.CENTER
             },
+            exactPosition = exactPosition,
             position = when (radioGroupPosition.checkedRadioButtonId) {
                 R.id.radio_position_start -> Tooltip.Position.START
                 R.id.radio_position_top -> Tooltip.Position.TOP

@@ -3,6 +3,7 @@
 package info.jukov.tooltip
 
 import android.app.Activity
+import android.graphics.PointF
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -21,6 +22,7 @@ class TooltipBuilder(
     private val window: Window
 ) {
     private var themeRes: Int = R.style.Tooltip
+    private var exactPosition: PointF? = null
     private var position: Tooltip.Position = Tooltip.Position.TOP
     private var onDisplayListener: ((View) -> Unit)? = null
     private var onHideListener: ((View) -> Unit)? = null
@@ -99,6 +101,10 @@ class TooltipBuilder(
         this.themeRes = themeRes
     }
 
+    fun setExactPosition(x: Float, y: Float): TooltipBuilder = apply {
+        this.exactPosition = PointF(x, y)
+    }
+
     fun setPosition(position: Tooltip.Position): TooltipBuilder = apply {
         this.position = position
     }
@@ -122,6 +128,7 @@ class TooltipBuilder(
     fun build(): Tooltip =
         Tooltip(activity, themeRes, tooltipView, targetView, touchTargetView, window)
             .apply {
+                exactPosition = this@TooltipBuilder.exactPosition
                 position = this@TooltipBuilder.position
                 onDisplayListener = this@TooltipBuilder.onDisplayListener
                 onHideListener = this@TooltipBuilder.onHideListener

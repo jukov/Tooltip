@@ -146,4 +146,20 @@
 
     </RadioGroup>
 
+    <EditText
+        android:id="@+id/exact_x"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/exact_x"
+        android:importantForAutofill="no"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/exact_y"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/exact_y"
+        android:importantForAutofill="no"
+        android:inputType="number"/>
+
 </LinearLayout>

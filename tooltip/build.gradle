@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-def version = "3"
+def version = "4"
 
 android {
     namespace "info.jukov.tooltip"
@@ -24,6 +24,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     libraryVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "tooltip-${variant.name}-${version}.aar"
@@ -32,6 +36,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.fragment:fragment:1.6.1'
-    implementation 'androidx.recyclerview:recyclerview:1.3.1'
+    implementation 'androidx.fragment:fragment:1.8.6'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
 }
